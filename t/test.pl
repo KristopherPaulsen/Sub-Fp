@@ -2,6 +2,7 @@ package Sub::Fp::Test;
 use warnings;
 use strict;
 use parent qw(Test::Class);
+use Data::Dumper;
 use Test::More;
 use Sub::Fp qw(
     map         inc     freduce     flatten
@@ -13,35 +14,40 @@ use Sub::Fp qw(
     len
 );
 
-sub len__returns_0_when_args_undef{
+sub len__returns_0_when_args_undef :Tests{
     is(len(), 0);
 }
 
-sub len__returns_0_when_empty_array {
+sub len__returns_0_when_empty_array :Tests {
     is(len([]), 0);
 }
 
-sub len__returns_0_when_empty_hash {
+sub len__returns_0_when_empty_hash :Tests {
     is(len({}), 0);
 }
 
-sub len__returns_0_when_empty_string {
+sub len__returns_0_when_empty_string :Tests {
     is(len(''), 0);
 }
 
-sub len__returns_length_of_array {
+sub len__returns_length_of_array :Tests {
     is(len([1,2,3,4,5]), 5);
 }
 
-sub len__returns_length_of_hash {
+sub len__returns_length_of_hash :Tests {
     is(
         len({ key1 => 'val', key2 => 'val', key3 => 'val' }),
         3
     );
 }
 
-sub len__returns_length_of_string {
+sub len__returns_length_of_string :Tests  {
     is(len('abcd'), 4);
+}
+
+
+sub len__returns_length_of_string_including_spaces :Tests  {
+    is(len('abcd  '), 6);
 }
 
 

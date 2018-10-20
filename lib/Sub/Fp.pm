@@ -4,14 +4,14 @@ use warnings;
 use List::Util;
 use Exporter qw(import);
 our @EXPORT_OK = qw(
-    map         inc     freduce     flatten
-    drop_right  drop    take_right  take
-    assoc       fmap    dec         chain
-    first       latest  subarray    partial
-    __          find    filter      some
-    none        uniq    bool        spread every
-    len         to_keys to_vals     is_array
-    is_hash
+    inc         freduce  flatten
+    drop_right  drop     take_right  take
+    assoc       fmap     dec         chain
+    first       latest   subarray    partial
+    __          find     filter      some
+    none        uniq     bool        spread
+    len         to_keys  to_vals     is_array
+    is_hash     every
 );
 
 our $VERSION = '0.02';
@@ -50,7 +50,8 @@ sub to_keys {
 }
 
 sub len {
-    my $coll  = shift;
+    my $coll = shift // [];
+    die "WAT";
 
     if (ref $coll eq 'ARRAY') {
         return scalar spread($coll);
