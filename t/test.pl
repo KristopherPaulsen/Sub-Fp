@@ -1,4 +1,4 @@
-package Fn::Test;
+package Sub::Fp::Test;
 use warnings;
 use strict;
 use parent qw(Test::Class);
