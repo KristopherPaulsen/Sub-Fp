@@ -2,7 +2,6 @@ package Sub::Fp;
 use strict;
 use warnings;
 use List::Util;
-use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     map         inc     freduce     flatten
