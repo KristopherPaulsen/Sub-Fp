@@ -2,7 +2,6 @@ package Sub::Fp::Test;
 use warnings;
 use strict;
 use parent qw(Test::Class);
-use Data::Dumper qw(Dumper);
 use Test::More;
 use Sub::Fp qw(
     map         inc     freduce     flatten
