@@ -4,7 +4,7 @@ use strict;
 use parent qw(Test::Class);
 use Data::Dumper qw(Dumper);
 use Test::More;
-use Fn qw(
+use Sub::Fp qw(
     map         inc     freduce     flatten
     drop_right  drop    take_right  take
     assoc       fmap    inc         dec      chain
