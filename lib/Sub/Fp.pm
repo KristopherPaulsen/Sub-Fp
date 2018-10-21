@@ -11,7 +11,7 @@ our @EXPORT_OK = qw(
     __          find     filter      some
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
-    is_hash     every
+    is_hash     every    sorter      sortby
 );
 
 our $VERSION = '0.02';
@@ -22,43 +22,61 @@ sub __ { ARG_PLACE_HOLDER };
 
 # -----------------------------------------------------------------------------#
 
-#TODO unit tests
-sub is_array{
+sub sortby {
+    my $fn   = shift;
     my $coll = shift;
+
+    return [ sort { $fn->($a, $b) } @$coll ];
+}
+
+sub sorter {
+    my $coll = shift // [];
+
+    return [ sort @$coll ];
+}
+
+sub is_array {
+    my $coll       = shift;
+    my $extra_args = [@_];
+
+    if (len($extra_args)) {
+        return 0;
+    }
 
     return bool(ref $coll eq 'ARRAY');
 }
 
-#TODO unit tests
 sub is_hash {
     my $coll = shift;
 
     return bool(ref $coll eq 'HASH');
 }
 
-#TODO unit tests FOR HASH AND ARRAY
 sub to_keys {
-    my $coll = shift;
+    my $coll = shift // [];
 
+    #Backwards compatibility < v5.12
     if (is_array($coll)) {
-        return [keys @{ $coll }]
+        return fmap(sub {
+            my (undef, $idx) = @_;
+            return $idx;
+        }, $coll);
     }
 
-    if (is_hash) {
+    if (is_hash($coll)) {
         return [keys %{ $coll }];
     }
 }
 
 sub len {
-    my $coll = shift // [];
-    die "WAT";
+    my $coll = shift || [];
 
     if (ref $coll eq 'ARRAY') {
         return scalar spread($coll);
     }
 
     if (ref $coll eq 'HASH') {
-        return to_keys($coll);
+        return scalar (keys %{ $coll });
     }
 
     return length($coll);
