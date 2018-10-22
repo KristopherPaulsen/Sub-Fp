@@ -581,22 +581,27 @@ sub drop__returns_empty_array_when_args_undef :Tests {
     is_deeply(drop(), []);
 }
 
-sub drop__returns_empty_array_when_incomplete_args :Tests {
+sub drop__returns_empty_array_when_array_empty_and_args :Tests {
     is_deeply(drop([], 1), []);
 }
 
-sub drop__drops_first_item_if_no_num_given :Tests {
+sub drop__returns_empty_array_when_args_greater_than_size :Tests {
+    is_deeply(drop([1,2,3,], 5), []);
+}
+
+
+sub drop__removes_first_item_if_no_num_given :Tests {
     is_deeply(drop(["first", "second", "third", "fourth"]), ["second", "third", "fourth"]);
 }
 
-sub drop__drops_number_of_items_from_beginning :Tests {
+sub drop__removes_number_of_items_from_beginning :Tests {
     is_deeply(
         drop(["first","second", "third", "fourth", "fifth"], 2),
         ["third", "fourth", "fifth"]
     )
 }
 
-sub drop__drops_no_items_if_num_is_zero :Tests {
+sub drop__removes_no_items_if_num_is_zero :Tests {
     is_deeply(
         drop(["first","second", "third", "fourth", "fifth"], 0),
         ["first","second", "third", "fourth", "fifth"],
@@ -620,6 +625,10 @@ sub drop_right__returns_empty_array_when_args_undef :Tests {
 
 sub drop_right__returns_empty_array_when_incomplete_args :Tests {
     is_deeply(drop_right([], 2), []);
+}
+
+sub drop_right__returns_empty_array_args_greater_than_size :Tests {
+    is_deeply(drop_right([1,2,3], 5), []);
 }
 
 sub drop_right__drops_last_item_if_no_num_given :Tests {
@@ -653,6 +662,13 @@ sub take__returns_empty_array_when_incomplete_args :Tests {
     is_deeply(take([], 2), []);
 }
 
+sub take__returns_entire_array_when_args_greater_than_size :Tests {
+    is_deeply(
+        take([1,2,3], 5),
+        [1,2,3]
+    );
+}
+
 sub take__returns_first_item_from_array_default :Tests {
     is_deeply(take([1,2,3,4,5,6,7]), [1]);
 }
@@ -671,6 +687,7 @@ sub take__returns_new_array :Tests {
 }
 
 
+
 sub take_right__returns_empty_array_when_empty_array :Tests {
     is_deeply(take_right([]), []);
 }
@@ -681,6 +698,13 @@ sub take_right__returns_empty_array_when_args_undef :Tests {
 
 sub take_right__returns_empty_array_when_incomplete_args :Tests {
     is_deeply(take_right([], 1), []);
+}
+
+sub take_right__returns_entire_array_when_args_greater_than_size :Tests {
+    is_deeply(
+        take_right([1,2,3], 5),
+        [1,2,3]
+    );
 }
 
 sub take_right__returns__last_item_if_no_num_given :Tests {

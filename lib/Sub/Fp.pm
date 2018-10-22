@@ -23,14 +23,11 @@ sub __ { ARG_PLACE_HOLDER };
 # -----------------------------------------------------------------------------#
 
 #TODO DROP/ TAKE/ more than size
-
 #TODO Change to use carp instead of warn/die
-#TODO check sorted/sortedby empty states
 #TODO fill
 #TODO nth
 #TODO memoize
 #TODO forEach array AND hash
-#TODO assoc hash,array check
 #TODO remove / reject
 
 sub noop { return undef }
@@ -226,6 +223,10 @@ sub take {
         return [];
     }
 
+    if ($count >= $len ) {
+        return $coll;
+    }
+
     return [@$coll[0 .. $count - 1]];
 }
 
@@ -236,6 +237,10 @@ sub take_right {
 
     if (!$len) {
         return [];
+    }
+
+    if ($count >= $len ) {
+        return $coll;
     }
 
     return [@$coll[($len - $count) .. ($len - 1)]];
