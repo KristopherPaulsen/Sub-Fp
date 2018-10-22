@@ -5,15 +5,130 @@ use parent qw(Test::Class);
 use Data::Dumper qw(Dumper);
 use Test::More;
 use Sub::Fp qw(
-    inc         reduces   flatten
-    drop_right  drop      take_right  take
-    assoc       maps      inc         dec      chain
-    first       end    subarray    partial
-    __          find      filter      some
-    none        uniq      bool        spread   every
-    len         is_array  is_hash     to_keys  to_vals 
-    noop      identity
+inc         reduces   flatten
+drop_right  drop      take_right  take
+assoc       maps      inc         dec      chain
+first       end       subarray    partial
+__          find      filter      some
+none        uniq      bool        spread   every
+len         is_array  is_hash     to_keys  to_vals
+noop        identity
 );
+
+sub partial__throws_no_func_error_if_no_args :Tests {
+    local $SIG{__WARN__} = sub { die $_[0] };
+
+    eval {
+        partial();
+    };
+
+    like($@, qr/Expected a function/);
+}
+
+sub partial__throws_no_func_error_if_wrong_args :Tests {
+    local $SIG{__WARN__} = sub { die $_[0] };
+
+    eval {
+        partial([]);
+    };
+
+    like($@, qr/Expected a function/);
+}
+
+sub partial__returns_func_ref :Tests {
+    is(ref partial(sub {}), 'CODE');
+}
+
+sub partial__returns_partially_applied_func :Tests {
+    my $add_three_nums = sub {
+        my ($a, $b, $c) = @_;
+
+        return $a + $b + $c;
+    };
+
+    my $add_two_nums = partial($add_three_nums, 1);
+
+    is($add_two_nums->(1,1), 3);
+}
+
+sub partial__returns_partially_applied_func_two_args_applied :Tests {
+    my $add_three_nums = sub {
+        my ($a, $b, $c) = @_;
+
+        return $a + $b + $c;
+    };
+
+    my $add_two_nums = partial($add_three_nums, 1, 1);
+
+    is($add_two_nums->(1), 3);
+}
+
+sub partial__returns_partially_applied_func_all_args_applied :Tests {
+    my $add_three_nums = sub {
+        my ($a, $b, $c) = @_;
+
+        return $a + $b + $c;
+    };
+
+    my $add_two_nums = partial($add_three_nums, 1, 1, 1);
+
+    is($add_two_nums->(), 3);
+}
+
+
+sub partial__returns_partially_applied_func_using_placeholder_and_implict_last_arg :Tests {
+    my $add_three_nums = sub {
+        my ($a, $b, $c) = @_;
+
+        return $a + $b + $c;
+    };
+
+    my $add_two_nums = partial($add_three_nums, 1, __,);
+
+    is($add_two_nums->(1,1), 3);
+}
+
+sub partial__returns_partially_applied_func_using_placeholder_and_explict_last_arg :Tests {
+    my $add_three_nums = sub {
+        my ($a, $b, $c) = @_;
+
+        return $a + $b + $c;
+    };
+
+    my $add_two_nums = partial($add_three_nums, 1, __, __);
+
+    is($add_two_nums->(1,1), 3);
+}
+
+sub partial__returns_partially_applied_func_with_placeholders_inbetween :Tests {
+    my $add_four_strings = sub {
+        my ($a, $b, $c, $d) = @_;
+
+        return $a . $b . $c . $d;
+    };
+
+    my $add_two_strings = partial($add_four_strings, "first ", __, "third ", __);
+
+    is_deeply(
+        $add_two_strings->("second ", "fourth "),
+        "first second third fourth "
+    );
+}
+
+sub partial__returns_partially_applied_func_with_placeholders_odd_placement :Tests {
+    my $add_four_strings = sub {
+        my ($a, $b, $c, $d) = @_;
+
+        return $a . $b . $c . $d;
+    };
+
+    my $add_two_strings = partial($add_four_strings, __ , __, "third ", __);
+
+    is_deeply(
+        $add_two_strings->("first ", "second ", "fourth "),
+        "first second third fourth "
+    );
+}
 
 sub to_vals__returns_empty_array_when_args_undef :Test {
     is_deeply(to_vals(), []);
@@ -826,6 +941,7 @@ sub flatten__returns_single_level_flattened :Tests {
 }
 
 
+#TODO Expected behaviors?
 sub subarray__returns_empty_array_if_args_undef :Tests {
     is_deeply(subarray(), []);
 }
@@ -842,7 +958,6 @@ sub subarray__returns_items_between_idxs_non_inclusive_end :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3,5), [4,5]);
 }
 
-#TODO Expected behavior here? check
 sub subarray__returns_empty_array_when_start_end_same :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3,3), []);
 }

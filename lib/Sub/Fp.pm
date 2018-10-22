@@ -1,7 +1,9 @@
 package Sub::Fp;
 use strict;
 use warnings;
+use Carp;
 use List::Util;
+use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     inc         reduces  flatten
@@ -314,6 +316,10 @@ sub partial {
     my $func    = shift;
     my $oldArgs = [@_];
 
+    if (ref $func ne 'CODE') {
+        carp("Expected a function as first argument");
+    }
+
     return sub {
         my $newArgs = [@_];
         my $no_placeholder_args = _fill_holders($oldArgs, $newArgs);
@@ -329,10 +335,15 @@ sub _fill_holders {
         return [@$oldArgs, @$newArgs];
     }
 
-    return maps(sub {
-        my ($oldArg, $idx) = @_;
-        return equal($oldArg, __) ? (shift @{ $newArgs }) : $oldArg;
-    }, $oldArgs);
+    return reduces(sub {
+        my ($args, $arg) = @_;
+
+        if (!equal($arg, __)) {
+            return [spread($args), $arg]
+        }
+
+        return [spread($args), shift @{ $newArgs }]
+    }, [], [spread($oldArgs), spread($newArgs)]);
 }
 
 sub subarray {
@@ -804,16 +815,164 @@ Shallow updates only
 
 =cut
 
+=head2 subarray
+
+Returns a subset of the original array, based on
+start index (inclusive) and end idx (not-inclusive)
+
+    subarray(["first", "second", "third", "fourth"], 0,2)
+
+    # ["first", "second"]
+
+=cut
+
+=head2 find
+
+Iterates over elements of collection, returning the first element predicate returns truthy for.
+
+    my $people = [
+        {
+            name => 'john',
+            age => 25,
+        },
+        {
+            name => 'Sally',
+            age => 25,
+        }
+    ]
+
+    find(sub {
+        my $person = shift;
+        return equal($person->{'name'}, 'sally')
+    }, $people);
+
+    # { name => 'sally', age => 25 }
+
+=cut
+
+=head2 filter
+
+Iterates over elements of collection, returning only elements the predicate returns truthy for.
+
+    my $people = [
+        {
+            name => 'john',
+            age => 25,
+        },
+        {
+            name => 'Sally',
+            age => 25,
+        },
+        {
+            name => 'Old Greg',
+            age => 100,
+        }
+    ]
+
+    filter(sub {
+        my $person = shift;
+        return $person->{'age'} < 30;
+    }, $people);
+
+    # [
+        {
+            name => 'john',
+            age => 25,
+        },
+        {
+            name => 'Sally',
+            age => 25,
+        }
+    ]
+
+=cut
+
+=head2 none
+
+If one element is found to return truthy for the given predicate, none returns 0
+
+
+    my $people = [
+        {
+            name => 'john',
+            age => 25,
+        },
+        {
+            name => 'Sally',
+            age => 25,
+        },
+        {
+            name => 'Old Greg',
+            age => 100,
+        }
+    ]
+
+    none(sub {
+        my $person = shift;
+        return $person->{'age'} > 99;
+    }, $people);
+
+    # 0
+
+    none(sub {
+        my $person = shift;
+        return $person->{'age'} > 101;
+    }, $people);
+
+    # 1
+
+=cut
+
+=head2 every
+
+Itterates through each element in the collection, and checks if element makes predicate
+return truthy. If all elements cause predicate to return truthy, every returns 1;
+
+    every(sub {
+        my $num = shift;
+        $num > 0;
+    }, [1,2,3,4]);
+
+    # 1
+
+    every(sub {
+        my $num = shift;
+        $num > 2;
+    }, [1,2,3,4]);
+
+    # 0
+
+=cut
+
+=head2 some
+
+Checks if predicate returns truthy for any element of collection.
+Iteration is stopped once predicate returns truthy.
+
+    some(sub {
+        my $num = shift;
+        $num > 0;
+    }, [1,2,3,4]);
+
+    # 1
+
+    some(sub {
+        my $num = shift;
+        $num > 2;
+    }, [1,2,3,4]);
+
+    # 1
+
+=cut
+
 =head1 EXPORT
 
 A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented module.
 
 chain
-subarray  partial
-__        find     filter    some
-none
-every
+partial
+__
 =cut
 
 =head1 AUTHOR
