@@ -41,30 +41,6 @@ sub identity {
     return $args;
 }
 
-#sub sortedby {
-    #my $fn       = shift;
-    #my $raw_coll = shift // [];
-    #my $coll     = is_array($raw_coll) ? $raw_coll : to_vals($raw_coll);
-
-    #return [
-        #sort { $fn->($a, $b) } @$coll
-    #];
-#}
-
-#sub sorted {
-    #my $coll = shift // [];
-
-    #if (is_array($coll)) {
-        #return [
-            #sort { $a < $b } @$coll
-        #];
-    #}
-
-    #my $string_array = [spread($coll)];
-
-    #return [ sort @$string_array ];
-#}
-
 sub is_array {
     my $coll       = shift;
     my $extra_args = [@_];
