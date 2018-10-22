@@ -25,8 +25,7 @@ sub __ { ARG_PLACE_HOLDER };
 # -----------------------------------------------------------------------------#
 
 #TODO DROP/ TAKE/ more than size
-#TODO Len of empty items
-#
+
 #TODO Change to use carp instead of warn/die
 #TODO check sorted/sortedby empty states
 #TODO fill
@@ -46,15 +45,24 @@ sub identity {
 
 sub sortedby {
     my $fn   = shift;
-    my $coll = shift;
+    my $coll = shift // [];
 
-    return [ sort { $fn->($a, $b) } @$coll ];
-}
+    return [
+        sort { $fn->($a, $b) } is_array($coll) ? spread($coll) : spread(to_vals($coll))
+    ];
+
+    print Dumper sort "acb";
 
 sub sorted {
     my $coll = shift // [];
 
-    return [ sort @$coll ];
+    if (is_array($coll)) {
+        return [ sort @$coll ];
+    }
+
+    my $string_array = [spread($coll)];
+
+    return [ sort @$string_array ];
 }
 
 sub is_array {
@@ -74,6 +82,20 @@ sub is_hash {
     return bool(ref $coll eq 'HASH');
 }
 
+sub to_vals {
+    my $coll = shift // [];
+
+    if (is_array($coll)) {
+        return $coll;
+    }
+
+    if (is_hash($coll)) {
+        return [values %{ $coll }];
+    }
+
+    return [spread($coll)];
+}
+
 sub to_keys {
     my $coll = shift // [];
 
@@ -88,6 +110,11 @@ sub to_keys {
     if (is_hash($coll)) {
         return [keys %{ $coll }];
     }
+
+    return maps(sub {
+        my (undef, $idx) = @_;
+        return $idx;
+    }, [spread($coll)])
 }
 
 sub len {
@@ -108,19 +135,6 @@ sub len {
 sub is_empty {
     my $coll = shift;
     return bool(len($coll) == 0);
-}
-
-#TODO unit tests FOR HASH AND ARRAY AND OTHER!
-sub to_vals {
-    my $coll = shift;
-
-    if (is_array($coll)) {
-        return [values @{ $coll }]
-    }
-
-    if (is_hash($coll)) {
-        return [values %{ $coll }];
-    }
 }
 
 sub uniq {
@@ -743,8 +757,8 @@ internal perl rules based on ternary coercion
 
 =head2 to_keys
 
-Creates an array of the own enumerable property names a hash, or
-indicies of an array
+Creates an array of the key names in a hash,
+indicies of an array, or chars in a string
 
     to_keys([1,2,3])
 
@@ -753,21 +767,86 @@ indicies of an array
     to_keys({ key => 'val', key2 => 'val2' })
 
     # ['key', 'key2']
+
+    to_keys("Hey")
+
+    # [0, 1, 2];
 
 =cut
 
-=head2 to_keys
+=head2 to_vals
 
-Creates an array of the own enumerable property names a hash, or
-indicies of an array
+Creates an array of the values in a hash, of an array, or string.
 
-    to_keys([1,2,3])
+    to_vals([1,2,3])
 
     # [0,1,2]
 
-    to_keys({ key => 'val', key2 => 'val2' })
+    to_vals({ key => 'val', key2 => 'val2' })
 
-    # ['key', 'key2']
+    # ['val', 'val2']
+
+    to_vals("Hey");
+
+    # ['H','e','y'];
+
+=cut
+
+=head2 uniq
+
+Creates a duplicate-free version of an array,
+in which only the first occurrence of each element is kept.
+The order of result values is determined by the order they occur in the array.
+
+    uniq([2,1,2])
+
+    # [2,1]
+
+    uniq(["Hi", "Howdy", "Hi"])
+
+    # ["Hi", "Howdy"]
+
+=cut
+
+=head2 assoc
+
+Returns new hash, or array, with the updated value at index / key.
+Shallow updates only
+
+    assoc([1,2,3,4,5,6,7], 0, "item")
+
+    # ["item",2,3,4,5,6,7]
+
+    assoc({ name => 'sally', age => 26}, 'name', 'jimmy')
+
+    # { name => 'jimmy', age => 26}
+
+=cut
+
+=head2 sorted
+
+Returns a sorted string / array following built-in perl sort
+
+    sorted([4,2,1])
+
+    # [1,2,4]
+
+    sorted("acb")
+
+    # ["a", "b", "c"]
+
+=cut
+
+=head2 sortby
+
+Returns a sorted string / array using
+supplied comparator func
+
+    # sortedby(sub { $_[0] > $_[1] }, [3,2,1]),
+
+    # [1,2,3]
+
+
 
 =cut
 
@@ -776,12 +855,11 @@ indicies of an array
 A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented module.
 
-assoc     chain
+chain
 subarray  partial
 __        find     filter    some
-none      uniq
-to_keys   to_vals
-every     sorted   sortedby
+none
+every     sortedby
 =cut
 
 =head1 AUTHOR

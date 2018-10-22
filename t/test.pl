@@ -11,9 +11,53 @@ use Sub::Fp qw(
     first       end    subarray    partial
     __          find      filter      some
     none        uniq      bool        spread   every
-    len         is_array  is_hash     to_keys  sorted
-    sortedby    noop      identity
+    len         is_array  is_hash     to_keys  to_vals 
+    sorted      sortedby    noop      identity
 );
+
+sub to_vals__returns_empty_array_when_args_undef :Test {
+    is_deeply(to_vals(), []);
+}
+
+sub to_vals__returns_empty_array_when_empty_array :Test {
+    is_deeply(to_vals([]), []);
+}
+
+sub to_vals__returns_array_of_values :Test {
+    is_deeply(to_vals([1,2,3]), [1,2,3]);
+}
+
+sub to_vals__returns_array_of_values_from_hash :Test {
+    my $result = to_vals({ key => 'val', key2 => 'val2' }),
+
+    my $expected = ['val', 'val2'];
+
+    is_deeply(sorted($result), sorted($expected));
+}
+
+sub to_vals__returns_array_of_values_shallow_from_hash :Test {
+
+    my $result = to_vals({
+        key => 'val',
+        key2 => 'val2',
+        key3 => {
+            key4 => 'val3'
+        }
+    });
+
+    my $expected = ['val', 'val2', { key4 => 'val3' }];
+
+    is_deeply(sorted($result), sorted($expected));
+}
+
+sub to_vals__returns_array_of_values_from_string :Test {
+
+    my $result = to_vals('Hello');
+
+    my $expected = ['H','e','l','l','o'];
+
+    is_deeply(sorted($result), sorted($expected));
+}
 
 sub identity__returns_undef_when_args_undef :Tests {
     is(identity(), undef)
@@ -54,6 +98,13 @@ sub sortedby__returns_sorted_array_by_func :Tests {
     );
 }
 
+sub sortedby__returns_sorted_string_by_func :Tests {
+    is_deeply(
+        sortedby(sub { $_[0] > $_[1] }, "acb"),
+        ["a", "b", "c"]
+    );
+}
+
 sub sortedby__returns_sorted_string_array_by_func :Tests {
 
     my $result = sortedby(sub {
@@ -82,7 +133,7 @@ sub sorted__returns_sorted_numbers :Tests {
 
 sub sorted__returns_sorted_strings :Tests {
     is_deeply(
-        sorted(["a", "c", "b"]),
+        sorted("acb"),
         ["a", "b", "c"],
     );
 }
@@ -268,6 +319,14 @@ sub to_keys__returns_keys_in_hash_shallow_only :Tests {
     my $expected = ['key1', 'key2', 'key3'];
 
     is_deeply(sorted($result), sorted($expected));
+}
+
+sub to_keys__returns_array_of_indicies_from_string :Tests {
+    my $result = to_keys('Hey');
+
+    my $expected = [0,1,2];
+
+    is_deeply($result, $expected);
 }
 
 sub reduces__returns_undef_when_no_args :Tests {
@@ -681,6 +740,10 @@ sub take_right__returns_new_array :Tests {
     ok($array != take($array))
 }
 
+
+sub assoc_returns_undef_when_args_undef :Tests {
+    is_deeply(assoc(), undef);
+}
 
 sub assoc__returns_original_array_when_no_args :Tests {
     is_deeply(assoc([1,2,3,4,5,6,7]), [1,2,3,4,5,6,7]);
