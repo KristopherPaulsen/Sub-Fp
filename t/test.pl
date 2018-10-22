@@ -5,34 +5,58 @@ use parent qw(Test::Class);
 use Data::Dumper qw(Dumper);
 use Test::More;
 use Sub::Fp qw(
-    inc     freduce     flatten
-    drop_right  drop    take_right  take
-    assoc       fmap    inc         dec      chain
-    first       latest  subarray    partial
-    __          find    filter      some
-    none        uniq    bool        spread   every
-    len         is_array is_hash    to_keys  sorter
-    sortby
+    inc         reduces   flatten
+    drop_right  drop      take_right  take
+    assoc       maps      inc         dec      chain
+    first       latest    subarray    partial
+    __          find      filter      some
+    none        uniq      bool        spread   every
+    len         is_array  is_hash     to_keys  sorted
+    sortedby    noop      identity
 );
 
-sub sortby__returns_empty_array_when_args_undef :Tests {
-    is_deeply(sortby(), []);
+sub identity__returns_undef_when_args_undef :Tests {
+    is(identity(), undef)
 }
 
-sub sortby__returns_empty_array_when_empty_array :Tests {
-    is_deeply(sortby([]), []);
+sub identity__returns_first_arg :Tests {
+    is_deeply(identity([1,2,3]), [1,2,3])
 }
 
-sub sortby__returns_sorted_array_by_func :Tests {
+sub identity__returns_only_first_arg :Tests {
     is_deeply(
-        sortby(sub { $_[0] > $_[1] }, [3,2,1]),
+        identity([1,2,3], "someOtherArgs"),
+        [1,2,3]
+    )
+}
+
+sub noop__returns_undef_when_args_undef :Tests {
+    is(noop(), undef)
+}
+
+sub noop__returns_undef_when_args_filled :Tests {
+    is_deeply(noop("some", "args"), undef)
+}
+
+
+sub sortedby__returns_empty_array_when_args_undef :Tests {
+    is_deeply(sortedby(), []);
+}
+
+sub sortedby__returns_empty_array_when_empty_array :Tests {
+    is_deeply(sortedby([]), []);
+}
+
+sub sortedby__returns_sorted_array_by_func :Tests {
+    is_deeply(
+        sortedby(sub { $_[0] > $_[1] }, [3,2,1]),
         [1,2,3]
     );
 }
 
-sub sortby__returns_sorted_string_array_by_func :Tests {
+sub sortedby__returns_sorted_string_array_by_func :Tests {
 
-    my $result = sortby(sub {
+    my $result = sortedby(sub {
         len($_[0]) <=> len($_[1]);
     }, ["aa", "a", "aaa"]);
 
@@ -41,45 +65,45 @@ sub sortby__returns_sorted_string_array_by_func :Tests {
     is_deeply($result, $expected);
 }
 
-sub sorter__returns_empty_array_when_args_undef :Tests {
-    is_deeply(sorter(), []);
+sub sorted__returns_empty_array_when_args_undef :Tests {
+    is_deeply(sorted(), []);
 }
 
-sub sorter__returns_empty_array_when_empty_array :Tests {
-    is_deeply(sorter([]), []);
+sub sorted__returns_empty_array_when_empty_array :Tests {
+    is_deeply(sorted([]), []);
 }
 
-sub sorter__returns_sorted_numbers :Tests {
+sub sorted__returns_sorted_numbers :Tests {
     is_deeply(
-        sorter([3,2,1]),
+        sorted([3,2,1]),
         [1,2,3],
     );
 }
 
-sub sorter__returns_sorted_strings :Tests {
+sub sorted__returns_sorted_strings :Tests {
     is_deeply(
-        sorter(["a", "c", "b"]),
+        sorted(["a", "c", "b"]),
         ["a", "b", "c"],
     );
 }
 
-sub fmap__returns_empty_array_when_args_undef :Tests {
-    is_deeply(fmap(), []);
+sub maps__returns_empty_array_when_args_undef :Tests {
+    is_deeply(maps(), []);
 }
 
-sub fmap__returns_empty_array_when_args_incomplete :Tests {
-    is_deeply(fmap([]), []);
+sub maps__returns_empty_array_when_args_incomplete :Tests {
+    is_deeply(maps([]), []);
 }
 
-sub fmap__returns_values_inc_by_one :Tests {
+sub maps__returns_values_inc_by_one :Tests {
     is_deeply(
-        fmap(\&inc, [1,2,3]),
+        maps(\&inc, [1,2,3]),
         [2,3,4]
     );
 }
 
-sub fmap__returns_item_plus_idx :Tests {
-    my $result = fmap(sub {
+sub maps__returns_item_plus_idx :Tests {
+    my $result = maps(sub {
         my ($str, $idx) = @_;
         return "$str $idx";
     }, ["index is", "index is"]),
@@ -89,8 +113,8 @@ sub fmap__returns_item_plus_idx :Tests {
     is_deeply($result, $expected);
 }
 
-sub fmap__returns_collection_as_arg :Tests {
-    my $result = fmap(sub {
+sub maps__returns_collection_as_arg :Tests {
+    my $result = maps(sub {
         my (undef, undef, $coll) = @_;
         return $coll;
     }, [1,1,1]);
@@ -228,7 +252,7 @@ sub to_keys__returns_keys_in_hash :Tests {
 
     my $expected = ['key1', 'key2'];
 
-    is_deeply(sorter($result), sorter($expected));
+    is_deeply(sorted($result), sorted($expected));
 }
 
 sub to_keys__returns_keys_in_hash_shallow_only :Tests {
@@ -243,19 +267,19 @@ sub to_keys__returns_keys_in_hash_shallow_only :Tests {
 
     my $expected = ['key1', 'key2', 'key3'];
 
-    is_deeply(sorter($result), sorter($expected));
+    is_deeply(sorted($result), sorted($expected));
 }
 
-sub freduce__returns_undef_when_no_args :Tests {
-    is(freduce(), undef);
+sub reduces__returns_undef_when_no_args :Tests {
+    is(reduces(), undef);
 }
 
-sub freduce__returns_undef_when_incomplete_args :Tests {
-    is(freduce([]), undef);
+sub reduces__returns_undef_when_incomplete_args :Tests {
+    is(reduces([]), undef);
 }
 
-sub freduce__returns_new_val_from_collection :Tests {
-       my $result = freduce(sub {
+sub reduces__returns_new_val_from_collection :Tests {
+       my $result = reduces(sub {
         my ($accum, $val) = @_;
         return $accum + $val
     }, [1,2,3,4]);
@@ -263,8 +287,8 @@ sub freduce__returns_new_val_from_collection :Tests {
     is($result, 10);
 }
 
-sub freduce__returns_new_val_from_collection_using_accum :Tests {
-    my $result = freduce(sub {
+sub reduces__returns_new_val_from_collection_using_accum :Tests {
+    my $result = reduces(sub {
         my ($accum, $val) = @_;
         return $accum + $val
     }, 100, [1,2,3,4]);
@@ -272,8 +296,8 @@ sub freduce__returns_new_val_from_collection_using_accum :Tests {
     is($result, 110);
 }
 
-sub freduce__returns_new_val_from_collection_using_accum_with_new_type :Tests {
-    my $result = freduce(sub {
+sub reduces__returns_new_val_from_collection_using_accum_with_new_type :Tests {
+    my $result = reduces(sub {
         my ($accum, $val) = @_;
         return {
             spread($accum),
@@ -290,8 +314,8 @@ sub freduce__returns_new_val_from_collection_using_accum_with_new_type :Tests {
     is_deeply($result, $expected);
 }
 
-sub freduce__returns_new_val_using_idx_arg :Tests {
-    my $result = freduce(sub {
+sub reduces__returns_new_val_using_idx_arg :Tests {
+    my $result = reduces(sub {
         my ($accum, undef, $idx) = @_;
         return [spread($accum), $idx];
     }, [], ["item", "item", "item", "item"]);
@@ -301,8 +325,8 @@ sub freduce__returns_new_val_using_idx_arg :Tests {
     is_deeply($result, $expected);
 }
 
-sub freduce__returns_sum_of_indicies :Tests {
-    my $result = freduce(sub {
+sub reduces__returns_sum_of_indicies :Tests {
+    my $result = reduces(sub {
         my ($accum, undef, $idx) = @_;
         return $accum + $idx
     }, 0, [0, 0, 0]);
@@ -312,8 +336,8 @@ sub freduce__returns_sum_of_indicies :Tests {
     is_deeply($result, $expected);
 }
 
-sub freduce__returns_collection_as_arg :Tests {
-    my $result = freduce(sub {
+sub reduces__returns_collection_as_arg :Tests {
+    my $result = reduces(sub {
         my ($accum, undef, undef, $coll) = @_;
 
         return [spread($accum), $coll];
@@ -587,7 +611,7 @@ sub drop_right__drops_item_if_num_given :Tests {
     is_deeply(drop_right([1,2,3,4,5,6,7], 1), [1,2,3,4,5,6]);
 }
 
-sub drop_right__drops_multi_items_from_end :Tests {
+sub drop_right__drops_multi_items_from_latest :Tests {
     is_deeply(drop_right([1,2,3,4,5,6,7], 2), [1,2,3,4,5]);
 }
 
@@ -767,12 +791,12 @@ sub subarray__returns_remaining_array_from_start_idx :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3), [4,5,6,7]);
 }
 
-sub subarray__returns_items_between_idxs_non_inclusive_end :Tests {
+sub subarray__returns_items_between_idxs_non_inclusive_latest :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3,5), [4,5]);
 }
 
 #TODO Expected behavior here? check
-sub subarray__returns_empty_array_when_start_end_same :Tests {
+sub subarray__returns_empty_array_when_start_latest_same :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3,3), []);
 }
 

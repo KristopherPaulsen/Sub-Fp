@@ -1,17 +1,19 @@
 package Sub::Fp;
 use strict;
 use warnings;
+use Data::Dumper qw(Dumper);
 use List::Util;
 use Exporter qw(import);
 our @EXPORT_OK = qw(
-    inc         freduce  flatten
+    inc         reduces  flatten
     drop_right  drop     take_right  take
-    assoc       fmap     dec         chain
+    assoc       maps     dec         chain
     first       latest   subarray    partial
     __          find     filter      some
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
-    is_hash     every    sorter      sortby
+    is_hash     every    sorted      sortedby
+    noop        identity
 );
 
 our $VERSION = '0.02';
@@ -22,14 +24,31 @@ sub __ { ARG_PLACE_HOLDER };
 
 # -----------------------------------------------------------------------------#
 
-sub sortby {
+#TODO Change to use carp instead of warn/die
+#TODO check sorted/sortedby empty states
+#TODO fill
+#TODO nth
+#TODO memoize
+#TODO forEach array AND hash
+#TODO assoc hash,array check
+#TODO remove / reject
+
+sub noop {}
+
+sub identity {
+    my $args = shift // undef;
+
+    return $args;
+}
+
+sub sortedby {
     my $fn   = shift;
     my $coll = shift;
 
     return [ sort { $fn->($a, $b) } @$coll ];
 }
 
-sub sorter {
+sub sorted {
     my $coll = shift // [];
 
     return [ sort @$coll ];
@@ -57,7 +76,7 @@ sub to_keys {
 
     #Backwards compatibility < v5.12
     if (is_array($coll)) {
-        return fmap(sub {
+        return maps(sub {
             my (undef, $idx) = @_;
             return $idx;
         }, $coll);
@@ -250,7 +269,7 @@ sub assoc {
     };
 }
 
-sub fmap {
+sub maps {
     my $func = shift;
     my $coll = shift;
 
@@ -264,9 +283,9 @@ sub fmap {
     return [@vals];
 }
 
-sub freduce {
+sub reduces {
     my $func           = shift;
-    my ($accum, $coll) = spread(_get_freduce_args([@_]));
+    my ($accum, $coll) = spread(_get_reduces_args([@_]));
 
     my $idx = 0;
 
@@ -277,7 +296,7 @@ sub freduce {
     } ($accum, @$coll);
 }
 
-sub _get_freduce_args {
+sub _get_reduces_args {
     my $args = shift;
 
     if (equal(len($args), 1)) {
@@ -312,7 +331,7 @@ sub _fill_holders {
         return [@$oldArgs, @$newArgs];
     }
 
-    return fmap(sub {
+    return maps(sub {
         my ($oldArg, $idx) = @_;
         return equal($oldArg, __) ? (shift @{ $newArgs }) : $oldArg;
     }, $oldArgs);
@@ -321,18 +340,18 @@ sub _fill_holders {
 sub subarray {
     my $coll  = shift || [];
     my $start = shift;
-    my $end   = shift // scalar @$coll;
+    my $latest   = shift // scalar @$coll;
 
     if (!$start) {
         return $coll;
     }
 
-    if ($start == $end) {
+    if ($start == $latest) {
         return [];
     }
 
     return [
-       @$coll[$start .. ($end - 1)],
+       @$coll[$start .. ($latest - 1)],
     ];
 }
 
