@@ -12,7 +12,7 @@ use Sub::Fp qw(
     __          find      filter      some
     none        uniq      bool        spread   every
     len         is_array  is_hash     to_keys  to_vals 
-    sorted      sortedby    noop      identity
+    noop      identity
 );
 
 sub to_vals__returns_empty_array_when_args_undef :Test {
@@ -32,7 +32,10 @@ sub to_vals__returns_array_of_values_from_hash :Test {
 
     my $expected = ['val', 'val2'];
 
-    is_deeply(sorted($result), sorted($expected));
+    is_deeply(
+        [sort @$result],
+        [sort @$expected],
+    );
 }
 
 sub to_vals__returns_array_of_values_shallow_from_hash :Test {
@@ -47,7 +50,10 @@ sub to_vals__returns_array_of_values_shallow_from_hash :Test {
 
     my $expected = ['val', 'val2', { key4 => 'val3' }];
 
-    is_deeply(sorted($result), sorted($expected));
+    is_deeply(
+        [sort @$result],
+        [sort @$expected],
+    );
 }
 
 sub to_vals__returns_array_of_values_from_string :Test {
@@ -56,7 +62,10 @@ sub to_vals__returns_array_of_values_from_string :Test {
 
     my $expected = ['H','e','l','l','o'];
 
-    is_deeply(sorted($result), sorted($expected));
+    is_deeply(
+        [sort @$result],
+        [sort @$expected],
+    );
 }
 
 sub identity__returns_undef_when_args_undef :Tests {
@@ -79,64 +88,77 @@ sub noop__returns_undef_when_args_undef :Tests {
 }
 
 sub noop__returns_undef_when_args_filled :Tests {
-    is_deeply(noop("some", "args"), undef)
+    is_deeply(noop("some", "args"), undef);
 }
 
 
-sub sortedby__returns_empty_array_when_args_undef :Tests {
-    is_deeply(sortedby(), []);
-}
+#sub sortedby__returns_empty_array_when_args_undef :Tests {
+    #is_deeply(sortedby(), []);
+#}
 
-sub sortedby__returns_empty_array_when_empty_array :Tests {
-    is_deeply(sortedby([]), []);
-}
+#sub sortedby__returns_empty_array_when_empty_array :Tests {
+    #is_deeply(sortedby([]), []);
+#}
 
-sub sortedby__returns_sorted_array_by_func :Tests {
-    is_deeply(
-        sortedby(sub { $_[0] > $_[1] }, [3,2,1]),
-        [1,2,3]
-    );
-}
+#sub sortedby__returns_sorted_array_by_func :Tests {
+    #is_deeply(
+        #sortedby(sub { $_[0] > $_[1] }, [3,2,1]),
+        #[1,2,3]
+    #);
+#}
 
-sub sortedby__returns_sorted_string_by_func :Tests {
-    is_deeply(
-        sortedby(sub { $_[0] > $_[1] }, "acb"),
-        ["a", "b", "c"]
-    );
-}
+##TODO sort asc by default
 
-sub sortedby__returns_sorted_string_array_by_func :Tests {
+#sub sortedby__returns_sorted_string_by_func :Tests {
+    #my $result = sortedby(sub {
+            #my ($first, $second) = @_;
+    #}, "acb");
 
-    my $result = sortedby(sub {
-        len($_[0]) <=> len($_[1]);
-    }, ["aa", "a", "aaa"]);
+    #my $expected = ["a", "b", "c"];
 
-    my $expected = ["a", "aa", "aaa"];
+    #is_deeply($result, $expected);
+#}
 
-    is_deeply($result, $expected);
-}
+#sub sortedby__returns_sorted_string_array_by_func :Tests {
 
-sub sorted__returns_empty_array_when_args_undef :Tests {
-    is_deeply(sorted(), []);
-}
+    #my $result = sortedby(sub {
+        #len($_[0]) <=> len($_[1]);
+    #}, ["aa", "a", "aaa"]);
 
-sub sorted__returns_empty_array_when_empty_array :Tests {
-    is_deeply(sorted([]), []);
-}
+    #my $expected = ["a", "aa", "aaa"];
 
-sub sorted__returns_sorted_numbers :Tests {
-    is_deeply(
-        sorted([3,2,1]),
-        [1,2,3],
-    );
-}
+    #is_deeply($result, $expected);
+#}
 
-sub sorted__returns_sorted_strings :Tests {
-    is_deeply(
-        sorted("acb"),
-        ["a", "b", "c"],
-    );
-}
+
+#sub sorted__returns_empty_array_when_args_undef :Tests {
+    #is_deeply(sorted(), []);
+#}
+
+#sub sorted__returns_empty_array_when_empty_array :Tests {
+    #is_deeply(sorted([]), []);
+#}
+
+#sub sorted__returns_sorted_numbers_in_asc :Tests {
+    #is_deeply(
+        #sorted([3,2,1]),
+        #[1,2,3],
+    #);
+#}
+
+#sub sorted__returns_sorted_numbers_in_asc_large :Tests {
+    #is_deeply(
+        #sorted([3,2,1, 100, 13]),
+        #[1,2,3,13,100],
+    #);
+#}
+
+#sub sorted__returns_sorted_string :Tests {
+    #is_deeply(
+        #sorted("acb"),
+        #["a", "b", "c"],
+    #);
+#}
 
 sub maps__returns_empty_array_when_args_undef :Tests {
     is_deeply(maps(), []);
@@ -303,7 +325,10 @@ sub to_keys__returns_keys_in_hash :Tests {
 
     my $expected = ['key1', 'key2'];
 
-    is_deeply(sorted($result), sorted($expected));
+    is_deeply(
+        [sort @$result],
+        [sort @$expected],
+    );
 }
 
 sub to_keys__returns_keys_in_hash_shallow_only :Tests {
@@ -318,7 +343,10 @@ sub to_keys__returns_keys_in_hash_shallow_only :Tests {
 
     my $expected = ['key1', 'key2', 'key3'];
 
-    is_deeply(sorted($result), sorted($expected));
+    is_deeply(
+        [sort @$result],
+        [sort @$expected],
+    );
 }
 
 sub to_keys__returns_array_of_indicies_from_string :Tests {

@@ -1,7 +1,6 @@
 package Sub::Fp;
 use strict;
 use warnings;
-use Data::Dumper qw(Dumper);
 use List::Util;
 use Exporter qw(import);
 our @EXPORT_OK = qw(
@@ -12,8 +11,7 @@ our @EXPORT_OK = qw(
     __          find     filter      some
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
-    is_hash     every    sorted      sortedby
-    noop        identity
+    is_hash     every    noop        identity
 );
 
 our $VERSION = '0.02';
@@ -35,7 +33,7 @@ sub __ { ARG_PLACE_HOLDER };
 #TODO assoc hash,array check
 #TODO remove / reject
 
-sub noop {}
+sub noop { return undef }
 
 sub identity {
     my $args = shift // undef;
@@ -43,27 +41,29 @@ sub identity {
     return $args;
 }
 
-sub sortedby {
-    my $fn   = shift;
-    my $coll = shift // [];
+#sub sortedby {
+    #my $fn       = shift;
+    #my $raw_coll = shift // [];
+    #my $coll     = is_array($raw_coll) ? $raw_coll : to_vals($raw_coll);
 
-    return [
-        sort { $fn->($a, $b) } is_array($coll) ? spread($coll) : spread(to_vals($coll))
-    ];
+    #return [
+        #sort { $fn->($a, $b) } @$coll
+    #];
+#}
 
-    print Dumper sort "acb";
+#sub sorted {
+    #my $coll = shift // [];
 
-sub sorted {
-    my $coll = shift // [];
+    #if (is_array($coll)) {
+        #return [
+            #sort { $a < $b } @$coll
+        #];
+    #}
 
-    if (is_array($coll)) {
-        return [ sort @$coll ];
-    }
+    #my $string_array = [spread($coll)];
 
-    my $string_array = [spread($coll)];
-
-    return [ sort @$string_array ];
-}
+    #return [ sort @$string_array ];
+#}
 
 sub is_array {
     my $coll       = shift;
@@ -823,33 +823,6 @@ Shallow updates only
 
 =cut
 
-=head2 sorted
-
-Returns a sorted string / array following built-in perl sort
-
-    sorted([4,2,1])
-
-    # [1,2,4]
-
-    sorted("acb")
-
-    # ["a", "b", "c"]
-
-=cut
-
-=head2 sortby
-
-Returns a sorted string / array using
-supplied comparator func
-
-    # sortedby(sub { $_[0] > $_[1] }, [3,2,1]),
-
-    # [1,2,3]
-
-
-
-=cut
-
 =head1 EXPORT
 
 A list of functions that can be exported.  You can delete this section
@@ -859,7 +832,7 @@ chain
 subarray  partial
 __        find     filter    some
 none
-every     sortedby
+every
 =cut
 
 =head1 AUTHOR
