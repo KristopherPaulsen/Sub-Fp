@@ -8,7 +8,7 @@ our @EXPORT_OK = qw(
     inc         reduces  flatten
     drop_right  drop     take_right  take
     assoc       maps     dec         chain
-    first       latest   subarray    partial
+    first       end   subarray    partial
     __          find     filter      some
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
@@ -24,8 +24,10 @@ sub __ { ARG_PLACE_HOLDER };
 
 # -----------------------------------------------------------------------------#
 
-#TODO Change to use carp instead of warn/die
 #TODO DROP/ TAKE/ more than size
+#TODO Len of empty items
+#
+#TODO Change to use carp instead of warn/die
 #TODO check sorted/sortedby empty states
 #TODO fill
 #TODO nth
@@ -192,7 +194,7 @@ sub first {
     return @$coll[0];
 }
 
-sub latest {
+sub end {
     my $coll = shift // [];
     my $len = scalar @$coll;
 
@@ -341,18 +343,18 @@ sub _fill_holders {
 sub subarray {
     my $coll  = shift || [];
     my $start = shift;
-    my $latest   = shift // scalar @$coll;
+    my $end   = shift // scalar @$coll;
 
     if (!$start) {
         return $coll;
     }
 
-    if ($start == $latest) {
+    if ($start == $end) {
         return [];
     }
 
     return [
-       @$coll[$start .. ($latest - 1)],
+       @$coll[$start .. ($end - 1)],
     ];
 }
 
@@ -590,23 +592,196 @@ Creates a slice of array with n elements taken from the end.
 
 =cut
 
+=head2 first
+
+Returns the first item in an array
+
+    first(["I", "am", "a", "string"])
+
+    # "I"
+
+    first([5,4,3,2,1])
+
+    # 5
+
+=cut
+
+=head2 end
+
+Returns the end, or last item in an array
+
+    end(["I", "am", "a", "string"])
+
+    # "string"
+
+    end([5,4,3,2,1])
+
+    # 1
+
+=cut
+
+=head2 len
+
+Returns the length of the collection.
+If an array, returns the number of items.
+If a hash, the number of key-val pairs.
+If a string, the number of chars (following built-in split)
+
+    len([1,2,3,4])
+
+    # 4
+
+    len("Hello")
+
+    # 5
+
+    len({ key => 'val', key2 => 'val'})
+
+    #2
+
+    len([])
+
+    # 0
+
+=cut
+
+=head2 noop
+
+A function that does nothing (like our government), and returns undef
+
+    noop()
+
+    # undef
+
+=cut
+
+=head2 identity
+
+A function that returns its first argument
+
+    identity()
+
+    # undef
+
+    identity(1)
+
+    # 1
+
+    # identity([1,2,3])
+
+    # [1,2,3]
+
+=cut
+
+=head2 is_array
+
+Returns 0 or 1 if the argument is an array
+
+    is_array()
+
+    # 0
+
+    is_array([1,2,3])
+
+    # 1
+
+=head2 is_hash
+
+Returns 0 or 1 if the argument is a hash
+
+    is_hash()
+
+    # 0
+
+    is_hash({ key => 'val' })
+
+    # 1
+
+=cut
+
+=head2 spread
+
+Destructures an array / hash into non-ref context.
+Destructures a string into an array of chars (following in-built split)
+
+    spread([1,2,3,4])
+
+    # 1,2,3,4
+
+    spread({ key => 'val' })
+
+    # key,'val'
+
+    spread("Hello")
+
+    # 'H','e','l','l','o'
+
+=cut
+
+=head2 bool
+
+Returns 0 or 1 based on truthiness of argument, following
+internal perl rules based on ternary coercion
+
+    bool([])
+
+    # 1
+
+    bool("hello!")
+
+    # 1
+
+    bool()
+
+    # 0
+
+    bool(undef)
+
+    # 0
+
+=cut
+
+=head2 to_keys
+
+Creates an array of the own enumerable property names a hash, or
+indicies of an array
+
+    to_keys([1,2,3])
+
+    # [0,1,2]
+
+    to_keys({ key => 'val', key2 => 'val2' })
+
+    # ['key', 'key2']
+
+=cut
+
+=head2 to_keys
+
+Creates an array of the own enumerable property names a hash, or
+indicies of an array
+
+    to_keys([1,2,3])
+
+    # [0,1,2]
+
+    to_keys({ key => 'val', key2 => 'val2' })
+
+    # ['key', 'key2']
+
+=cut
+
 =head1 EXPORT
 
 A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented module.
 
-               
-           take_right  
-    assoc                     chain
-    first       latest   subarray    partial
-    __          find     filter      some
-    none        uniq     bool        spread
-    len         to_keys  to_vals     is_array
-    is_hash     every    sorted      sortedby
-    noop        identity
-
-
-
+assoc     chain
+subarray  partial
+__        find     filter    some
+none      uniq
+to_keys   to_vals
+every     sorted   sortedby
 =cut
 
 =head1 AUTHOR

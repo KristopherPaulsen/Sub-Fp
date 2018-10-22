@@ -8,7 +8,7 @@ use Sub::Fp qw(
     inc         reduces   flatten
     drop_right  drop      take_right  take
     assoc       maps      inc         dec      chain
-    first       latest    subarray    partial
+    first       end    subarray    partial
     __          find      filter      some
     none        uniq      bool        spread   every
     len         is_array  is_hash     to_keys  sorted
@@ -611,7 +611,7 @@ sub drop_right__drops_item_if_num_given :Tests {
     is_deeply(drop_right([1,2,3,4,5,6,7], 1), [1,2,3,4,5,6]);
 }
 
-sub drop_right__drops_multi_items_from_latest :Tests {
+sub drop_right__drops_multi_items_from_end :Tests {
     is_deeply(drop_right([1,2,3,4,5,6,7], 2), [1,2,3,4,5]);
 }
 
@@ -791,12 +791,12 @@ sub subarray__returns_remaining_array_from_start_idx :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3), [4,5,6,7]);
 }
 
-sub subarray__returns_items_between_idxs_non_inclusive_latest :Tests {
+sub subarray__returns_items_between_idxs_non_inclusive_end :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3,5), [4,5]);
 }
 
 #TODO Expected behavior here? check
-sub subarray__returns_empty_array_when_start_latest_same :Tests {
+sub subarray__returns_empty_array_when_start_end_same :Tests {
     is_deeply(subarray([1,2,3,4,5,6,7], 3,3), []);
 }
 
@@ -820,16 +820,16 @@ sub first__returns_first_item_in_list_of_many_items :Tests {
 }
 
 
-sub latest__returns_undefined_if_no_args :Tests {
-    is(latest(), undef);
+sub end__returns_undefined_if_no_args :Tests {
+    is(end(), undef);
 }
 
-sub latest__returns_last_item_in_list_of_one :Tests {
-    is(latest([1]), 1);
+sub end__returns_last_item_in_list_of_one :Tests {
+    is(end([1]), 1);
 }
 
-sub latest__returns_last_item_in_list_of_many_items :Tests {
-    is(latest(["item", "another", "lastItem"]), "lastItem");
+sub end__returns_last_item_in_list_of_many_items :Tests {
+    is(end(["item", "another", "lastItem"]), "lastItem");
 }
 
 sub inc__throws_warning_if_non_num_as_arg :Tests {
