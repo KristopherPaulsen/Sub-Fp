@@ -25,6 +25,7 @@ sub __ { ARG_PLACE_HOLDER };
 # -----------------------------------------------------------------------------#
 
 #TODO Change to use carp instead of warn/die
+#TODO DROP/ TAKE/ more than size
 #TODO check sorted/sortedby empty states
 #TODO fill
 #TODO nth
@@ -405,33 +406,206 @@ sub spread {
 
 =head1 NAME
 
-Sub::Fp - The great new Sub::Fp!
+Sub::Fp - A Clojure / Python Toolz / Lodash inspired Functional Utility Library
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+This library provides numerous functional programming utility methods,
+as well as functional varients of native in-built methods, to allow for consistent,
+concise code.
 
-Perhaps a little code snippet.
+=head1 SUBROUTINES/METHODS
 
-    use Sub::Fp;
+=head2 inc
 
-    my $foo = Sub::Fp->new();
-    ...
+Increments the supplied number by 1
+
+    inc(1)
+
+    # => 2
+
+=cut
+
+=head2 dec
+
+Decrements the supplied number by 1
+
+    dec(2)
+
+    # => 1
+
+=cut
+
+=head2 maps
+
+Creates an array of values by running each element in collection thru iteratee.
+The iteratee is invoked with three arguments:
+(value, index|key, collection).
+
+    maps(sub {
+        my $num = shift;
+    }, [1,1,1]);
+
+    # 3
+
+=cut
+
+=head2 reduces
+
+Reduces collection to a value which is the accumulated result of running each element in collection thru iteratee,
+where each successive invocation is supplied the return value of the previous.
+If accumulator is not given, the first element of collection is used as the initial value.
+The iteratee is invoked with four arguments:
+(accumulator, value, index|key, collection).
+
+    # Implicit Accumulator
+
+    reduces(sub {
+        my ($sum, $num) = @_;
+
+        return $sum + $num;
+    }, [1,1,1]);
+
+    # 3
+
+
+    # Explict Accumulator
+
+    reduces(sub {
+        my ($accum, $num) = @_;
+        return {
+            %{ $accum },
+            key => $num,
+        }
+    }, {}, [1,2,3]);
+
+    # {
+        key => 1,
+        key => 2,
+        key => 3,
+    }
+=cut
+
+=head2 flatten
+
+Flattens array a single level deep.
+
+    flatten([1,1,1, [2,2,2]]);
+
+    # [1,1,1,2,2,2];
+
+=cut
+
+=head2 drop
+
+Creates a slice of array with n elements dropped from the beginning.
+
+    drop([1,2,3])
+
+    # [2,3];
+
+    drop([1,2,3], 2)
+
+    # [3]
+
+    drop([1,2,3], 5)
+
+    # []
+
+    drop([1,2,3], 0)
+
+    # [1,2,3]
+=cut
+
+
+
+=head2 drop_right
+
+Creates a slice of array with n elements dropped from the end.
+
+    drop_right([1,2,3]);
+
+    # [1,2]
+
+    drop_right([1,2,3], 2)
+
+    # [1]
+
+    drop_right([1,2,3], 5)
+
+    # []
+
+    drop_right([1,2,3], 0)
+
+    #[1,2,3]
+=cut
+
+=head2 take
+
+Creates a slice of array with n elements taken from the beginning.
+
+    take([1, 2, 3);
+
+    # [1]
+
+    take([1, 2, 3], 2);
+
+    # [1, 2]
+
+    take([1, 2, 3], 5);
+
+    # [1, 2, 3]
+
+    take([1, 2, 3], 0);
+
+    # []
+
+=cut
+
+=head2 take_right
+
+Creates a slice of array with n elements taken from the end.
+
+    take_right([1, 2, 3]);
+
+    # [3]
+
+    tak_right([1, 2, 3], 2);
+
+    # [2, 3]
+
+    take_right([1, 2, 3], 5);
+
+    # [1, 2, 3]
+
+    take_right([1, 2, 3], 0);
+
+    # []
+
+=cut
 
 =head1 EXPORT
 
 A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented module.
 
-=head1 SUBROUTINES/METHODS
+               
+           take_right  
+    assoc                     chain
+    first       latest   subarray    partial
+    __          find     filter      some
+    none        uniq     bool        spread
+    len         to_keys  to_vals     is_array
+    is_hash     every    sorted      sortedby
+    noop        identity
 
-=head2 function2
+
 
 =cut
 
