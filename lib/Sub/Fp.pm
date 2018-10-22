@@ -965,14 +965,86 @@ Iteration is stopped once predicate returns truthy.
 
 =cut
 
+=head2 partial
+
+Creates a function that invokes func with partials prepended to the arguments it receives.
+(funcRef, args)
+
+    my $add_three_nums = sub {
+        my ($a, $b, $c) = @_;
+
+        return $a + $b + $c;
+    };
+
+    my $add_two_nums = partial($add_three_nums, 1);
+
+    $add_two_nums->(1,1)
+
+    # 3
+
+
+    # Can also use __ to act as a placeholder
+
+    my $add_four_strings = sub {
+        my ($a, $b, $c, $d) = @_;
+
+        return $a . $b . $c . $d;
+    };
+
+    my $add_two_strings = partial($add_four_strings, "first ", __, "third ", __);
+
+    $add_two_strings->("second ", "third ")
+
+    # "first second third fourth"
+
+=cut
+
+=head2 chain
+
+Composes functions, left to right, and invokes them, returning
+the result. Accepts an expression as the first argument, to be passed
+as the first argument to the proceding function
+
+    chain(
+        [1,2,3, [4,5,6]],
+        sub {
+            my $array = shift;
+            return [spread($array), 7]
+        },
+        \&flatten,
+    );
+
+    # [1,2,3,4,5,6,7]
+
+
+    # Invokes first function, and uses that as start value for next func
+    chain(
+        sub { [1,2,3, [4,5,6]] },
+        sub {
+            my $array = shift;
+            return [spread($array), 7]
+        },
+        \&flatten,
+    )
+
+    # [1,2,3,4,5,6,7]
+
+=cut
+
 =head1 EXPORT
 
 A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented module.
 
-chain
-partial
-__
+    inc         reduces  flatten
+    drop_right  drop     take_right  take
+    assoc       maps     dec         chain
+    first       end   subarray    partial
+    __          find     filter      some
+    none        uniq     bool        spread
+    len         to_keys  to_vals     is_array
+    is_hash     every    noop        identity
+
 =cut
 
 =head1 AUTHOR
@@ -984,7 +1056,6 @@ Kristopher C. Paulsen, C<< <kristopherpaulsen+cpan at gmail.com> >>
 Please report any bugs or feature requests to C<bug-sub-fp at rt.cpan.org>, or through
 the web interface at L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=Sub-Fp>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
 
 =head1 SUPPORT
 
