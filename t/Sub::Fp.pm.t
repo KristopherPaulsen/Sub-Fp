@@ -5,9 +5,9 @@ use parent qw(Test::Class);
 use Data::Dumper qw(Dumper);
 use Test::More;
 use Sub::Fp qw(
-inc         reduces   flatten
+incr         reduces   flatten
 drop_right  drop      take_right  take
-assoc       maps      inc         dec      chain
+assoc       maps      dec      chain
 first       end       subarray    partial
 __          find      filter      some
 none        uniq      bool        spread   every
@@ -217,7 +217,7 @@ sub maps__returns_empty_array_when_args_incomplete :Tests {
 
 sub maps__returns_values_inc_by_one :Tests {
     is_deeply(
-        maps(\&inc, [1,2,3]),
+        maps(\&incr, [1,2,3]),
         [2,3,4]
     );
 }
@@ -994,19 +994,19 @@ sub end__returns_last_item_in_list_of_many_items :Tests {
     is(end(["item", "another", "lastItem"]), "lastItem");
 }
 
-sub inc__throws_warning_if_non_num_as_arg :Tests {
+sub incr__throws_warning_if_non_num_as_arg :Tests {
 
     local $SIG{__WARN__} = sub {
         die shift;
     };
 
-    eval { inc("string") };
+    eval { incr("string") };
 
     like($@, qr/isn't numeric in/);
 }
 
-sub inc__returns_num_plus_one :Tests {
-    is(inc(100), 101);
+sub incr__returns_num_plus_one :Tests {
+    is(incr(100), 101);
 }
 
 

@@ -6,7 +6,7 @@ use List::Util;
 use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
-    inc         reduces  flatten
+    incr         reduces  flatten
     drop_right  drop     take_right  take
     assoc       maps     dec         chain
     first       end   subarray    partial
@@ -168,7 +168,7 @@ sub none {
     return $bool ? 1 : 0;
 }
 
-sub inc {
+sub incr {
     my $num = shift;
     return $num + 1;
 }
