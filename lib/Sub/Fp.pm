@@ -201,31 +201,34 @@ sub flatten {
 }
 
 sub drop {
-    my $coll = shift || [];
-    my $count = shift // 1;
-    my $len   = scalar @$coll;
+    my $args     = [@_];
+    my $count    = len($args) > 1 ? $args->[0] : 1;
+    my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
+    my $coll_len = len($coll);
 
-    return [@$coll[$count .. $len - 1]];
+    return [@$coll[$count .. $coll_len - 1]];
 }
 
 sub drop_right {
-    my $coll  = shift || [];
-    my $count = shift // 1;
-    my $len   = scalar @$coll;
+    my $args     = [@_];
+    my $count    = len($args) > 1 ? $args->[0] : 1;
+    my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
+    my $coll_len = len($coll);
 
-    return [@$coll[0 .. ($len - ($count + 1))]];
+    return [@$coll[0 .. ($coll_len - ($count + 1))]];
 }
 
 sub take {
-    my $coll  = shift || [];
-    my $count = shift // 1;
-    my $len   = scalar @$coll;
+    my $args     = [@_];
+    my $count    = len($args) > 1 ? $args->[0] : 1;
+    my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
+    my $coll_len = len($coll);
 
-    if (!$len) {
+    if (!$coll_len) {
         return [];
     }
 
-    if ($count >= $len ) {
+    if ($count >= $coll_len ) {
         return $coll;
     }
 
@@ -233,19 +236,20 @@ sub take {
 }
 
 sub take_right {
-    my $coll  = shift || [];
-    my $count = shift // 1;
-    my $len   = scalar @$coll;
+    my $args     = [@_];
+    my $count    = len($args) > 1 ? $args->[0] : 1;
+    my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
+    my $coll_len = len($coll);
 
-    if (!$len) {
+    if (!$coll_len) {
         return [];
     }
 
-    if ($count >= $len ) {
+    if ($count >= $coll_len ) {
         return $coll;
     }
 
-    return [@$coll[($len - $count) .. ($len - 1)]];
+    return [@$coll[($coll_len - $count) .. ($coll_len - 1)]];
 }
 
 sub assoc {
@@ -257,9 +261,9 @@ sub assoc {
 
     if (ref $obj eq 'ARRAY') {
         return [
-            @{(take($obj, $key))},
+            @{(take($key, $obj))},
             $item,
-            @{(drop($obj, $key + 1))},
+            @{(drop($key + 1, $obj))},
         ];
     }
 
