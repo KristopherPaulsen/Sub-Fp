@@ -5,9 +5,9 @@ use parent qw(Test::Class);
 use Data::Dumper qw(Dumper);
 use Test::More;
 use Sub::Fp qw(
-inc         reduces   flatten
+incr         reduces   flatten
 drop_right  drop      take_right  take
-assoc       maps      inc         dec      chain
+assoc       maps      dec      chain
 first       end       subarray    partial
 __          find      filter      some
 none        uniq      bool        spread   every
@@ -217,7 +217,7 @@ sub maps__returns_empty_array_when_args_incomplete :Tests {
 
 sub maps__returns_values_inc_by_one :Tests {
     is_deeply(
-        maps(\&inc, [1,2,3]),
+        maps(\&incr, [1,2,3]),
         [2,3,4]
     );
 }
@@ -697,11 +697,11 @@ sub drop__returns_empty_array_when_args_undef :Tests {
 }
 
 sub drop__returns_empty_array_when_array_empty_and_args :Tests {
-    is_deeply(drop([], 1), []);
+    is_deeply(drop(1, []), []);
 }
 
 sub drop__returns_empty_array_when_args_greater_than_size :Tests {
-    is_deeply(drop([1,2,3,], 5), []);
+    is_deeply(drop(5, [1,2,3,]), []);
 }
 
 
@@ -711,14 +711,14 @@ sub drop__removes_first_item_if_no_num_given :Tests {
 
 sub drop__removes_number_of_items_from_beginning :Tests {
     is_deeply(
-        drop(["first","second", "third", "fourth", "fifth"], 2),
+        drop(2, ["first","second", "third", "fourth", "fifth"]),
         ["third", "fourth", "fifth"]
     )
 }
 
 sub drop__removes_no_items_if_num_is_zero :Tests {
     is_deeply(
-        drop(["first","second", "third", "fourth", "fifth"], 0),
+        drop(0, ["first","second", "third", "fourth", "fifth"]),
         ["first","second", "third", "fourth", "fifth"],
     )
 }
@@ -739,11 +739,11 @@ sub drop_right__returns_empty_array_when_args_undef :Tests {
 }
 
 sub drop_right__returns_empty_array_when_incomplete_args :Tests {
-    is_deeply(drop_right([], 2), []);
+    is_deeply(drop_right(2, []), []);
 }
 
 sub drop_right__returns_empty_array_args_greater_than_size :Tests {
-    is_deeply(drop_right([1,2,3], 5), []);
+    is_deeply(drop_right(5, [1,2,3]), []);
 }
 
 sub drop_right__drops_last_item_if_no_num_given :Tests {
@@ -751,11 +751,11 @@ sub drop_right__drops_last_item_if_no_num_given :Tests {
 }
 
 sub drop_right__drops_item_if_num_given :Tests {
-    is_deeply(drop_right([1,2,3,4,5,6,7], 1), [1,2,3,4,5,6]);
+    is_deeply(drop_right(1, [1,2,3,4,5,6,7]), [1,2,3,4,5,6]);
 }
 
 sub drop_right__drops_multi_items_from_end :Tests {
-    is_deeply(drop_right([1,2,3,4,5,6,7], 2), [1,2,3,4,5]);
+    is_deeply(drop_right(2, [1,2,3,4,5,6,7]), [1,2,3,4,5]);
 }
 
 sub drop_right__returns_new_array :Tests {
@@ -774,12 +774,12 @@ sub take__returns_empty_array_when_args_undef :Tests {
 }
 
 sub take__returns_empty_array_when_incomplete_args :Tests {
-    is_deeply(take([], 2), []);
+    is_deeply(take(2, []), []);
 }
 
 sub take__returns_entire_array_when_args_greater_than_size :Tests {
     is_deeply(
-        take([1,2,3], 5),
+        take(5, [1,2,3]),
         [1,2,3]
     );
 }
@@ -789,11 +789,11 @@ sub take__returns_first_item_from_array_default :Tests {
 }
 
 sub take__returns_num_of_items_from_array :Tests {
-    is_deeply(take([1,2,3,4,5,6,7], 1), [1])
+    is_deeply(take(1, [1,2,3,4,5,6,7]), [1])
 }
 
 sub take__multi_items_from_array :Tests {
-    is_deeply(take([1,2,3,4,5,6,7], 2), [1,2])
+    is_deeply(take(2, [1,2,3,4,5,6,7]), [1,2])
 }
 
 sub take__returns_new_array :Tests {
@@ -812,12 +812,12 @@ sub take_right__returns_empty_array_when_args_undef :Tests {
 }
 
 sub take_right__returns_empty_array_when_incomplete_args :Tests {
-    is_deeply(take_right([], 1), []);
+    is_deeply(take_right(1, []), []);
 }
 
 sub take_right__returns_entire_array_when_args_greater_than_size :Tests {
     is_deeply(
-        take_right([1,2,3], 5),
+        take_right(5, [1,2,3]),
         [1,2,3]
     );
 }
@@ -827,11 +827,11 @@ sub take_right__returns__last_item_if_no_num_given :Tests {
 }
 
 sub take_right__returns_num_of_items_from_array :Tests {
-    is_deeply(take_right([1,2,3,4,5,6,7], 1), [7]);
+    is_deeply(take_right(1, [1,2,3,4,5,6,7]), [7]);
 }
 
 sub take_right__returns_multi_items_from_array :Tests {
-    is_deeply(take_right([1,2,3,4,5,6,7], 3), [5,6,7]);
+    is_deeply(take_right(3, [1,2,3,4,5,6,7]), [5,6,7]);
 }
 
 sub take_right__returns_new_array :Tests {
@@ -994,19 +994,19 @@ sub end__returns_last_item_in_list_of_many_items :Tests {
     is(end(["item", "another", "lastItem"]), "lastItem");
 }
 
-sub inc__throws_warning_if_non_num_as_arg :Tests {
+sub incr__throws_warning_if_non_num_as_arg :Tests {
 
     local $SIG{__WARN__} = sub {
         die shift;
     };
 
-    eval { inc("string") };
+    eval { incr("string") };
 
     like($@, qr/isn't numeric in/);
 }
 
-sub inc__returns_num_plus_one :Tests {
-    is(inc(100), 101);
+sub incr__returns_num_plus_one :Tests {
+    is(incr(100), 101);
 }
 
 
