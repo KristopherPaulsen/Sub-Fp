@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     is_hash     every    noop        identity
 );
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -411,10 +411,6 @@ sub spread {
 =head1 NAME
 
 Sub::Fp - A Clojure / Python Toolz / Lodash inspired Functional Utility Library
-
-=head1 VERSION
-
-Version 0.02
 
 =cut
 
