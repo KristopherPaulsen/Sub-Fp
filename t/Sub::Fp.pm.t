@@ -7,7 +7,7 @@ use Test::More;
 use Sub::Fp qw(
 incr         reduces   flatten
 drop_right  drop      take_right  take
-assoc       maps      dec      chain
+assoc       maps      decr      chain
 first       end       subarray    partial
 __          find      filter      some
 none        uniq      bool        spread   every
@@ -362,7 +362,6 @@ sub to_keys__returns_indices_in_array :Tests {
     my $expected = [0,1,2];
 }
 
-#TODO Make sure it works with different levels and sort
 sub to_keys__returns_keys_in_hash :Tests {
 
     my $result = to_keys({
@@ -665,7 +664,6 @@ sub find__returns_item_when_found_in_array :Tests {
 }
 
 
-#TODO More unit tests
 sub filter__returns_empty_when_empty_args :Tests {
     is_deeply(
         filter([]),
@@ -941,7 +939,6 @@ sub flatten__returns_single_level_flattened :Tests {
 }
 
 
-#TODO Expected behaviors?
 sub subarray__returns_empty_array_if_args_undef :Tests {
     is_deeply(subarray(), []);
 }
@@ -1010,23 +1007,23 @@ sub incr__returns_num_plus_one :Tests {
 }
 
 
-sub dec__throws_warning_if_non_num_as_arg :Tests {
+sub decr__throws_warning_if_non_num_as_arg :Tests {
 
     local $SIG{__WARN__} = sub {
         die shift;
     };
 
-    eval{ dec("string") };
+    eval{ decr("string") };
 
     like($@, qr/isn't numeric in/);
 }
 
-sub dec__returns_num_minus_one :Tests {
-    is(dec(100), 99);
+sub decr__returns_num_minus_one :Tests {
+    is(decr(100), 99);
 }
 
-sub dec__returns_num_minus_one_when_zero :Tests {
-    is(dec(0), -1);
+sub decr__returns_num_minus_one_when_zero :Tests {
+    is(decr(0), -1);
 }
 
 __PACKAGE__->runtests;

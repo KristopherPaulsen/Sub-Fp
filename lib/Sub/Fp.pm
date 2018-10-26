@@ -8,7 +8,7 @@ use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr         reduces  flatten
     drop_right  drop     take_right  take
-    assoc       maps     dec         chain
+    assoc       maps     decr         chain
     first       end   subarray    partial
     __          find     filter      some
     none        uniq     bool        spread
@@ -165,7 +165,7 @@ sub incr {
     return $num + 1;
 }
 
-sub dec {
+sub decr {
     my $num = shift;
     return $num - 1;
 }
@@ -436,11 +436,11 @@ Increments the supplied number by 1
 
 =cut
 
-=head2 dec
+=head2 decr
 
 Decrements the supplied number by 1
 
-    dec(2)
+    decr(2)
 
     # => 1
 
@@ -1034,7 +1034,7 @@ if you don't export anything, such as for a purely object-oriented module.
 
     incr        reduces  flatten
     drop_right  drop     take_right  take
-    assoc       maps     dec         chain
+    assoc       maps     decr         chain
     first       end      subarray    partial
     __          find     filter      some
     none        uniq     bool        spread

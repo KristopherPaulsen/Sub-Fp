@@ -9,5 +9,6 @@ t/Fn.pm.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
+t/Sub::Fp.pm.t
 t/test.pl
 xt/boilerplate.t
