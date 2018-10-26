@@ -426,11 +426,11 @@ concise code.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 inc
+=head2 incr
 
 Increments the supplied number by 1
 
-    inc(1)
+    incr(1)
 
     # => 2
 
