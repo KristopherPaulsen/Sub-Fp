@@ -454,9 +454,10 @@ The iteratee is invoked with three arguments:
 
     maps(sub {
         my $num = shift;
+        return $num + 1;
     }, [1,1,1]);
 
-    # 3
+    # [2,2,2]
 
 =cut
 
