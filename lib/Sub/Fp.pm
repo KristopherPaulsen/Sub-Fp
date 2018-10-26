@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     is_hash     every    noop        identity
 );
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use constant ARG_PLACE_HOLDER => {};
 
