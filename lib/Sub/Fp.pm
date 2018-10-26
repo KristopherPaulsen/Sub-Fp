@@ -24,14 +24,6 @@ sub __ { ARG_PLACE_HOLDER };
 
 # -----------------------------------------------------------------------------#
 
-#TODO DROP/ TAKE/ more than size
-#TODO Change to use carp instead of warn/die
-#TODO fill
-#TODO nth
-#TODO memoize
-#TODO forEach array AND hash
-#TODO remove / reject
-
 sub noop { return undef }
 
 sub identity {
