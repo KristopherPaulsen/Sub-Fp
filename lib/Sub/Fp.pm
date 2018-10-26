@@ -490,10 +490,10 @@ The iteratee is invoked with four arguments:
     }, {}, [1,2,3]);
 
     # {
-        key => 1,
-        key => 2,
-        key => 3,
-    }
+    #    key => 1,
+    #    key => 2,
+    #    key => 3,
+    # }
 =cut
 
 =head2 flatten
@@ -871,15 +871,15 @@ Iterates over elements of collection, returning only elements the predicate retu
     }, $people);
 
     # [
-        {
-            name => 'john',
-            age => 25,
-        },
-        {
-            name => 'Sally',
-            age => 25,
-        }
-    ]
+    #    {
+    #        name => 'john',
+    #        age => 25,
+    #    },
+    #    {
+    #        name => 'Sally',
+    #        age => 25,
+    #    }
+    # ]
 
 =cut
 
