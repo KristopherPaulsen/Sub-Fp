@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     is_hash     every    noop        identity
 );
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -426,6 +426,22 @@ concise code.
 
 =head1 SUBROUTINES/METHODS
 
+=head1 EXPORT
+
+A list of functions that can be exported.  You can delete this section
+if you don't export anything, such as for a purely object-oriented module.
+
+    incr        reduces  flatten
+    drop_right  drop     take_right  take
+    assoc       maps     decr         chain
+    first       end      subarray    partial
+    __          find     filter      some
+    none        uniq     bool        spread
+    len         to_keys  to_vals     is_array
+    is_hash     every    noop        identity
+
+=cut
+
 =head2 incr
 
 Increments the supplied number by 1
@@ -485,7 +501,7 @@ The iteratee is invoked with four arguments:
     reduces(sub {
         my ($accum, $num) = @_;
         return {
-            %{ $accum },
+            spread($accum),
             key => $num,
         }
     }, {}, [1,2,3]);
@@ -670,7 +686,7 @@ A function that returns its first argument
 
     # 1
 
-    # identity([1,2,3])
+    identity([1,2,3])
 
     # [1,2,3]
 
@@ -1025,22 +1041,6 @@ as the first argument to the proceding function
     )
 
     # [1,2,3,4,5,6,7]
-
-=cut
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-    incr        reduces  flatten
-    drop_right  drop     take_right  take
-    assoc       maps     decr         chain
-    first       end      subarray    partial
-    __          find     filter      some
-    none        uniq     bool        spread
-    len         to_keys  to_vals     is_array
-    is_hash     every    noop        identity
 
 =cut
 
