@@ -522,15 +522,15 @@ Creates a slice of array with n elements dropped from the beginning.
 
     # [2,3];
 
-    drop([1,2,3], 2)
+    drop(2, [1,2,3])
 
     # [3]
 
-    drop([1,2,3], 5)
+    drop(5, [1,2,3])
 
     # []
 
-    drop([1,2,3], 0)
+    drop(0, [1,2,3])
 
     # [1,2,3]
 =cut
@@ -545,15 +545,15 @@ Creates a slice of array with n elements dropped from the end.
 
     # [1,2]
 
-    drop_right([1,2,3], 2)
+    drop_right(2, [1,2,3])
 
     # [1]
 
-    drop_right([1,2,3], 5)
+    drop_right(5, [1,2,3])
 
     # []
 
-    drop_right([1,2,3], 0)
+    drop_right(0, [1,2,3])
 
     #[1,2,3]
 =cut
@@ -566,15 +566,15 @@ Creates a slice of array with n elements taken from the beginning.
 
     # [1]
 
-    take([1, 2, 3], 2);
+    take(2, [1, 2, 3]);
 
     # [1, 2]
 
-    take([1, 2, 3], 5);
+    take(5, [1, 2, 3]);
 
     # [1, 2, 3]
 
-    take([1, 2, 3], 0);
+    take(0, [1, 2, 3]);
 
     # []
 
@@ -588,15 +588,15 @@ Creates a slice of array with n elements taken from the end.
 
     # [3]
 
-    tak_right([1, 2, 3], 2);
+    take_right(2, [1, 2, 3]);
 
     # [2, 3]
 
-    take_right([1, 2, 3], 5);
+    take_right(5, [1, 2, 3]);
 
     # [1, 2, 3]
 
-    take_right([1, 2, 3], 0);
+    take_right(0, [1, 2, 3]);
 
     # []
 
@@ -1040,10 +1040,10 @@ as the first argument to the proceding function
 A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented module.
 
-    inc         reduces  flatten
+    incr        reduces  flatten
     drop_right  drop     take_right  take
     assoc       maps     dec         chain
-    first       end   subarray    partial
+    first       end      subarray    partial
     __          find     filter      some
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
