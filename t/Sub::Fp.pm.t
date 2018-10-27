@@ -12,8 +12,73 @@ first       end       subarray    partial
 __          find      filter      some
 none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
-noop        identity  is_empty    flow
+noop        identity  is_empty    flow     is_eq
 );
+
+sub is_eq__returns_0_when_args_incomplete :Tests {
+    is(is_eq([]), 0);
+}
+
+sub is_eq__returns_0_when_different_refs :Tests {
+    my $obj1 = {};
+    my $obj2 = {};
+
+    is(is_eq($obj1, $obj2), 0);
+}
+
+sub is_eq__returns_0_when_different_types :Tests {
+    my $obj = {};
+    my $string = "I am a string!";
+
+    is(is_eq($obj, $string), 0);
+}
+
+sub is_eq__returns_0_when_different_types_with_num :Tests {
+    my $num = 123;
+    my $string = "I am a string!";
+
+    is(is_eq($num, $string), 0);
+}
+
+# Same as internal perl engine
+sub is_eq__returns_1_when_string_and_num_but_same_value :Tests {
+    my $num = 123;
+    my $string = "123";
+
+    is(is_eq($num, $string), 1);
+}
+
+sub is_eq__returns_1_when_args_are_equal_undef :Tests {
+    is(is_eq(), 1);
+}
+
+sub is_eq__returns_1_when_args_are_equal_ref :Tests {
+    my $obj = {};
+
+    is(is_eq($obj, $obj), 1);
+}
+
+sub is_eq__returns_1_when_args_are_equal_hash :Tests {
+    my $obj = {};
+
+    is(is_eq($obj, $obj), 1);
+}
+
+sub is_eq__returns_1_when_args_are_equal_array :Tests {
+    my $obj = [];
+
+    is(is_eq($obj, $obj), 1);
+}
+
+sub is_eq__returns_1_when_args_are_equal_strings :Tests {
+    my $string = "Hello world!";
+
+    is(is_eq($string, $string), 1);
+}
+
+sub is_eq__returns_1_when_args_are_equal_nums :Tests {
+    is(is_eq(100, 100), 1);
+}
 
 sub flow__returns_empty_sub_when_args_empty :Tests {
     my $func = flow();

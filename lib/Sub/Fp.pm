@@ -14,7 +14,7 @@ our @EXPORT_OK = qw(
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
-    is_empty    flow
+    is_empty    flow     is_eq
 );
 
 our $VERSION = '0.08';
@@ -112,7 +112,6 @@ sub len {
     return length($coll);
 }
 
-#TODO unit tests;
 sub is_empty {
     my $coll = shift;
     return bool(len($coll) == 0);
@@ -309,7 +308,7 @@ sub reduces {
 sub _get_reduces_args {
     my $args = shift;
 
-    if (equal(len($args), 1)) {
+    if (is_eq(len($args), 1)) {
         return chain(
             $args,
             \&flatten,
@@ -337,18 +336,17 @@ sub partial {
     }
 }
 
-#TODO DO this without mutation?
 sub _fill_holders {
     my ($oldArgs, $newArgs) = @_;
 
-    if (none(sub { equal($_[0], __) }, $oldArgs)) {
+    if (none(sub { is_eq($_[0], __) }, $oldArgs)) {
         return [@$oldArgs, @$newArgs];
     }
 
     return reduces(sub {
         my ($args, $arg) = @_;
 
-        if (!equal($arg, __)) {
+        if (!is_eq($arg, __)) {
             return [spread($args), $arg]
         }
 
@@ -384,30 +382,28 @@ sub chain {
     } (ref($val) eq 'CODE' ? $val->() : $val), @funcs;
 }
 
-#TODO write le unit tests
-sub equal {
-    my ($arg1, $arg2) = @_;
+sub is_eq {
+    my $arg1 = shift // __;
+    my $arg2 = shift // __;
 
     if (ref $arg1 ne ref $arg2) {
         return 0;
     }
 
-    if(ref $arg1 eq 'String' &&
-       ref $arg2 eq 'String') {
-        return bool($arg1 eq $arg2);
+    if (every(\&is_array, [$arg1, $arg2]) ||
+        every(\&is_hash,  [$arg1, $arg2])) {
+        return bool($arg1 == $arg2);
     }
 
-    return bool($arg1 == $arg2);
+    return bool($arg1 eq $arg2);
 }
 
-#TODO Unit Tests
 sub bool {
     my ($val) = @_;
 
     return $val ? 1 : 0;
 }
 
-#TODO Unit tests, WORKS FOR STRINGS?
 sub spread {
     my $coll = shift // [];
 
@@ -446,7 +442,7 @@ concise code.
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
-    flow
+    flow        is_eq
 
 =cut
 
@@ -700,6 +696,39 @@ A function that returns its first argument
 
 =cut
 
+=head2 is_eq
+
+Returns 0 or 1 if the two values have == equality, with convience wrapping
+for different types (no need to use eq vs ==). Follows internal perl rules
+on equality following strings vs numbers in perl.
+
+    is_eq([], [])
+
+    # 1
+
+    is_eq(1,1)
+
+    # 1
+
+
+    my $obj = {};
+
+    is_eq($obj, $obj);
+
+    # 1
+
+
+    is_eq("123", 123)
+
+    # 1  'Following perls internal rules on comparing scalars'
+
+
+    is_eq({ key => 'val' }, {key => 'val'});
+
+    # 0
+
+=cut
+
 =head2 is_array
 
 Returns 0 or 1 if the argument is an array
@@ -711,6 +740,8 @@ Returns 0 or 1 if the argument is an array
     is_array([1,2,3])
 
     # 1
+
+=cut
 
 =head2 is_hash
 
@@ -891,7 +922,7 @@ Iterates over elements of collection, returning the first element predicate retu
 
     find(sub {
         my $person = shift;
-        return equal($person->{'name'}, 'sally')
+        return is_eq($person->{'name'}, 'sally')
     }, $people);
 
     # { name => 'sally', age => 25 }
