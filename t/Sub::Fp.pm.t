@@ -12,8 +12,36 @@ first       end       subarray    partial
 __          find      filter      some
 none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
-noop        identity  is_empty
+noop        identity  is_empty    flow
 );
+
+sub flow__returns_empty_sub_when_args_empty :Tests {
+    my $func = flow();
+
+    is($func->(), undef);
+}
+
+sub flow__throws_warning_when_not_given_sub_as_argument :Tests {
+    local $SIG{__WARN__} = sub { die $_[0] };
+
+    eval {
+        flow()
+    };
+
+    like($@, qr/Expected a function/);
+}
+
+sub flow__returns_func_ref_composed_of_passed_in_args :Tests {
+    my $func = flow(\&incr, \&incr);
+
+    is(ref $func, 'CODE');
+}
+
+sub flow__returns_func_that_evaluates_to_composition_of_funcs :Tests {
+    my $func = flow(\&incr, \&incr);
+
+    is($func->(1), 3);
+}
 
 sub is_empty__returns_1_when_args_undef :Tests {
     is(is_empty(), 1);

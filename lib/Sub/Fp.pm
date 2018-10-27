@@ -6,18 +6,18 @@ use List::Util;
 use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
-    incr         reduces  flatten
+    incr        reduces  flatten
     drop_right  drop     take_right  take
-    assoc       maps     decr         chain
-    first       end   subarray    partial
+    assoc       maps     decr        chain
+    first       end      subarray    partial
     __          find     filter      some
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
-    is_empty
+    is_empty    flow
 );
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -31,6 +31,19 @@ sub identity {
     my $args = shift // undef;
 
     return $args;
+}
+
+sub flow {
+    my $args = [@_];
+
+    if (ref $args->[0] ne 'CODE') {
+        carp("Expected a function as first argument");
+    }
+
+    return sub {
+        my $start_value = shift // noop;
+        chain($start_value, spread($args));
+    }
 }
 
 sub is_array {
@@ -427,12 +440,13 @@ concise code.
 
     incr        reduces  flatten
     drop_right  drop     take_right  take
-    assoc       maps     decr         chain
+    assoc       maps     decr        chain
     first       end      subarray    partial
     __          find     filter      some
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
+    flow
 
 =cut
 
@@ -1062,6 +1076,19 @@ as the first argument to the proceding function
     )
 
     # [1,2,3,4,5,6,7]
+
+=cut
+
+=head2 flow
+
+Creates a function that returns the result of invoking the given functions,
+where each successive invocation is supplied the return value of the previous.
+
+    my $addTwo = flow(\&incr, \&incr);
+
+    $addTwo->(1);
+
+    # 3
 
 =cut
 
