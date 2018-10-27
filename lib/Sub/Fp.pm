@@ -14,6 +14,7 @@ our @EXPORT_OK = qw(
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
+    is_empty
 );
 
 our $VERSION = '0.07';
@@ -708,6 +709,33 @@ Returns 0 or 1 if the argument is a hash
     is_hash({ key => 'val' })
 
     # 1
+
+=cut
+
+=head2 is_empty
+
+Returns 1 if the argument is 'empty',
+0 if not empty. Used on strings, arrays, hashes.
+
+    is_empty()
+
+    # 1
+
+    is_empty([])
+
+    # 1
+
+    is_empty([1,2,3])
+
+    # 0
+
+    is_empty({ key => 'val' })
+
+    # 0
+
+    is_empty("I am a string")
+
+    # 0
 
 =cut
 

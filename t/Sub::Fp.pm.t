@@ -12,8 +12,40 @@ first       end       subarray    partial
 __          find      filter      some
 none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
-noop        identity
+noop        identity  is_empty
 );
+
+sub is_empty__returns_1_when_args_undef :Tests {
+    is(is_empty(), 1);
+}
+
+sub is_empty__returns_1_when_args_empty_array :Tests {
+    is(is_empty([]), 1)
+}
+
+sub is_empty__returns_1_when_args_empty_string :Tests {
+    is(is_empty(''), 1)
+}
+
+sub is_empty__returns_1_when_args_empty_hash :Tests {
+    is(is_empty({}), 1)
+}
+
+sub is_empty__returns_0_when_args_not_a_collection :Tests {
+    is(is_empty(1), 0)
+}
+
+sub is_empty__returns_0_when_args_an_array :Tests {
+    is(is_empty([1,2,3]), 0)
+}
+
+sub is_empty__returns_0_when_args_a_hash :Tests {
+    is(is_empty({ key => 'value' }), 0);
+}
+
+sub is_empty__returns_0_when_args_a_string :Tests {
+    is(is_empty("I am not empty!"), 0);
+}
 
 sub partial__throws_no_func_error_if_no_args :Tests {
     local $SIG{__WARN__} = sub { die $_[0] };
