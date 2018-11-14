@@ -17,7 +17,7 @@ our @EXPORT_OK = qw(
     is_empty    is_sub   flow        eql
 );
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 use constant ARG_PLACE_HOLDER => {};
 
