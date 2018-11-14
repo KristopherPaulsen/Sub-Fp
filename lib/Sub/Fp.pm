@@ -4,6 +4,7 @@ use warnings;
 use Carp;
 use List::Util;
 use Data::Dumper qw(Dumper);
+use Data::PatternCompare;
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr        reduces  flatten
@@ -24,6 +25,8 @@ use constant ARG_PLACE_HOLDER => {};
 sub __ { ARG_PLACE_HOLDER };
 
 # -----------------------------------------------------------------------------#
+
+my $cmp = Data::PatternCompare->new;
 
 sub noop { return undef }
 
@@ -135,26 +138,40 @@ sub uniq {
 }
 
 sub find {
-    my $fn   = shift;
+    my $pred   = shift;
     my $coll = shift // [];
 
+    if (!is_sub($pred)) {
+        return find(sub {
+            my $subset = shift;
+            return bool($cmp->pattern_match($subset, $pred))
+        }, $coll);
+    }
+
     return List::Util::first {
-        $fn->($_)
+        $pred->($_)
     } @$coll;
 }
 
 sub filter {
-    my $fn   = shift;
+    my $pred  = shift;
     my $coll = shift // [];
 
-    return [grep { $fn->($_) } @$coll];
+    if (!is_sub($pred)) {
+        return filter(sub {
+            my $subset = shift;
+            return bool($cmp->pattern_match($subset, $pred))
+        }, $coll);
+    }
+
+    return [grep { $pred->($_) } @$coll];
 }
 
 sub some {
-    my $fn   = shift;
+    my $pred = shift;
     my $coll = shift // [];
 
-    return find($fn, $coll) ? 1 : 0
+    return bool(find($pred, $coll));
 }
 
 sub every {
