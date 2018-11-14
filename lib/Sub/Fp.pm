@@ -14,7 +14,7 @@ our @EXPORT_OK = qw(
     none        uniq     bool        spread
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
-    is_empty    flow     eql
+    is_empty    is_sub   flow        eql
 );
 
 our $VERSION = '0.10';
@@ -44,6 +44,12 @@ sub flow {
         my $start_value = shift // noop;
         chain($start_value, spread($args));
     }
+}
+
+sub is_sub {
+    my $sub = shift;
+
+    return bool(eql(ref $sub, 'CODE'));
 }
 
 sub is_array {
@@ -726,6 +732,25 @@ on equality following strings vs numbers in perl.
     eql({ key => 'val' }, {key => 'val'});
 
     # 0 'Only identity equality'
+
+=cut
+
+=head2 is_sub
+
+Returns 0 or 1 if the argument is a sub ref
+
+    is_sub()
+
+    # 0
+
+    is_sub(sub {})
+
+    # 1
+
+    my $sub = sub {};
+    is_sub($sub)
+
+    # 1
 
 =cut
 
