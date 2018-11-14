@@ -13,7 +13,36 @@ __          find      filter      some
 none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
+is_sub
 );
+
+sub is_sub__returns_0_when_args_undef :Tests {
+    is(is_sub(), 0);
+}
+
+sub is_sub__returns_0_when_args_explicit_undef :Tests {
+    is(is_sub(undef), 0);
+}
+
+sub is_sub__returns_0_when_args_hash :Tests {
+    is(is_sub({}), 0);
+}
+
+sub is_sub__returns_0_when_args_array :Tests {
+    is(is_sub([]), 0);
+}
+
+sub is_sub__returns_0_when_args_string :Tests {
+    is(is_sub(''), 0);
+}
+
+sub is_sub__returns_0_when_args_number :Tests {
+    is(is_sub(1), 0);
+}
+
+sub is_sub__returns_1_when_args_is_code_ref :Tests {
+    is(is_sub(sub {}), 1);
+}
 
 sub eql__returns_0_when_args_incomplete :Tests {
     is(eql([]), 0);
