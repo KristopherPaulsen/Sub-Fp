@@ -994,7 +994,7 @@ Iterates over elements of collection, returning the first element predicate retu
 
     # { name => 'sally', age => 25 }
 
-    # filter also supports 'iteratee object shorthand'
+    # find also supports 'iteratee object shorthand'
 
     my $people = [
         {
@@ -1005,7 +1005,7 @@ Iterates over elements of collection, returning the first element predicate retu
         {
             name          => 'Sally',
             age           => 25,
-            favorite_food => 'broccoli',
+            favorite_food => 'oranges',
         },
         {
             name          => 'Old Greg',
@@ -1014,14 +1014,9 @@ Iterates over elements of collection, returning the first element predicate retu
         }
     ]
 
-    filter({ favorite_food => 'broccoli' }, $people);
+    find({ favorite_food => 'broccoli' }, $people);
 
     # [
-    #     {
-    #         name          => 'john',
-    #         age           => 25,
-    #         favorite_food => 'broccoli',
-    #     },
     #     {
     #         name          => 'Sally',
     #         age           => 25,
