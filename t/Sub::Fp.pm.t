@@ -284,19 +284,19 @@ sub partial__returns_partially_applied_func_with_placeholders_odd_placement :Tes
     );
 }
 
-sub to_vals__returns_empty_array_when_args_undef :Test {
+sub to_vals__returns_empty_array_when_args_undef :Tests {
     is_deeply(to_vals(), []);
 }
 
-sub to_vals__returns_empty_array_when_empty_array :Test {
+sub to_vals__returns_empty_array_when_empty_array :Tests {
     is_deeply(to_vals([]), []);
 }
 
-sub to_vals__returns_array_of_values :Test {
+sub to_vals__returns_array_of_values :Tests {
     is_deeply(to_vals([1,2,3]), [1,2,3]);
 }
 
-sub to_vals__returns_array_of_values_from_hash :Test {
+sub to_vals__returns_array_of_values_from_hash :Tests {
     my $result = to_vals({ key => 'val', key2 => 'val2' }),
 
     my $expected = ['val', 'val2'];
@@ -307,7 +307,7 @@ sub to_vals__returns_array_of_values_from_hash :Test {
     );
 }
 
-sub to_vals__returns_array_of_values_shallow_from_hash :Test {
+sub to_vals__returns_array_of_values_shallow_from_hash :Tests {
 
     my $result = to_vals({
         key => 'val',
@@ -325,7 +325,7 @@ sub to_vals__returns_array_of_values_shallow_from_hash :Test {
     );
 }
 
-sub to_vals__returns_array_of_values_from_string :Test {
+sub to_vals__returns_array_of_values_from_string :Tests {
 
     my $result = to_vals('Hello');
 
@@ -817,6 +817,52 @@ sub find__returns_item_when_found_in_array :Tests {
     );
 }
 
+sub find__returns_item_based_on_iteratee_shorthand :Tests {
+    my $people = [
+        {
+            name    => 'sally',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+        {
+            name    => 'Bob',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'wrestler',
+            }
+        },
+        {
+            name    => 'Robert',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'unemployed',
+            }
+        },
+    ];
+
+    my $teachers = find(
+        {
+            details => {
+                occupation => 'teacher',
+            }
+        },
+        $people,
+    );
+
+    is_deeply(
+        $teachers,
+        {
+            name    => 'sally',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+    );
+}
+
 
 sub filter__returns_empty_when_empty_args :Tests {
     is_deeply(
@@ -825,17 +871,72 @@ sub filter__returns_empty_when_empty_args :Tests {
     );
 }
 
-sub filter__returns_empty_when_not_found_in_array {
+sub filter__returns_empty_when_not_found_in_array :Tests {
     is_deeply(
         filter(sub { $_[0] > 100}, [1,2,3,4,5]),
         [],
     );
 }
 
-sub filter__returns_multi_items_that_match_predicate {
+sub filter__returns_multi_items_that_match_predicate :Tests {
     is_deeply(
         filter(sub { $_[0] > 2}, [1,2,3,4,5]),
         [3,4,5]
+    );
+}
+
+sub filter__returns_items_based_on_iteratee_shorthand :Tests {
+    my $people = [
+        {
+            name    => 'sally',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation => 'teacher',
+            }
+        },
+        {
+            name    => 'Bob',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+        {
+            name    => 'Robert',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'unemployed',
+            }
+        },
+    ];
+
+    my $teachers = filter(
+        {
+            details => {
+                occupation => 'teacher',
+            }
+        },
+        $people,
+    );
+
+    is_deeply(
+        $teachers,
+        [
+            {
+                name    => 'sally',
+                details => {
+                    favorite_foods => ["cheese", "bread", "oranges"],
+                    occupation => 'teacher',
+                }
+            },
+            {
+                name    => 'Bob',
+                details => {
+                    favorite_foods => ["cheese", "bread", "oranges"],
+                    occupation     => 'teacher',
+                }
+            },
+        ]
     );
 }
 

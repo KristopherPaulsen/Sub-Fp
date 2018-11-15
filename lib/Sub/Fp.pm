@@ -22,11 +22,15 @@ our $VERSION = '0.11';
 
 use constant ARG_PLACE_HOLDER => {};
 
-sub __ { ARG_PLACE_HOLDER };
-
 # -----------------------------------------------------------------------------#
 
 my $cmp = Data::PatternCompare->new;
+
+sub _is_subset {
+    return $cmp->pattern_match($_[0], $_[1]);
+}
+
+sub __ { ARG_PLACE_HOLDER };
 
 sub noop { return undef }
 
@@ -138,13 +142,13 @@ sub uniq {
 }
 
 sub find {
-    my $pred   = shift;
+    my $pred = shift;
     my $coll = shift // [];
 
     if (!is_sub($pred)) {
         return find(sub {
             my $subset = shift;
-            return bool($cmp->pattern_match($subset, $pred))
+            return bool(_is_subset($subset, $pred))
         }, $coll);
     }
 
@@ -160,7 +164,7 @@ sub filter {
     if (!is_sub($pred)) {
         return filter(sub {
             my $subset = shift;
-            return bool($cmp->pattern_match($subset, $pred))
+            return bool(_is_subset($subset, $pred))
         }, $coll);
     }
 
