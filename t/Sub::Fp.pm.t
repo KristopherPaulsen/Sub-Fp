@@ -657,6 +657,43 @@ sub every__returns_0_when_predicate_only_matches_some :Tests {
     )
 }
 
+sub every__returns_true_when_all_items_matche_iteratee_shorthand :Tests {
+    my $people = [
+        {
+            name    => 'sally',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+        {
+            name    => 'Bob',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'wrestler',
+            }
+        },
+        {
+            name    => 'Robert',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'unemployed',
+            }
+        },
+    ];
+
+    my $all_teachers_like_cheese = every(
+        {
+            details => {
+                favorite_foods => ['cheese'],
+            }
+        },
+        $people,
+    );
+
+    is ($all_teachers_like_cheese, 1);
+}
+
 sub bool__returns_0_when_undef :Tests {
     is(bool(), 0)
 }
@@ -719,6 +756,39 @@ sub some__returns_false_if_none_match_predicate :Tests {
     );
 }
 
+sub some__returns_true_when_atleast_one_item_matches_iteratee_shorthand :Tests {
+    my $people = [
+        {
+            name    => 'sally',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+        {
+            name    => 'Bob',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'wrestler',
+            }
+        },
+        {
+            name    => 'Robert',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'unemployed',
+            }
+        },
+    ];
+
+    my $a_teacher_is_named_sally = some(
+        { name => 'sally' },
+        $people,
+    );
+
+    is ($a_teacher_is_named_sally, 1);
+}
+
 sub none__returns_true_when_empty_args :Tests {
     is(none(sub{}, []), 1);
 }
@@ -746,6 +816,43 @@ sub none__returns_false_when_multi_matches_predicate :Tests {
         none(sub { $_[0] > 3 }, [1,2,3,3,3,5,10]),
         0
     )
+}
+
+sub none__returns_true_when_no_items_matche_iteratee_shorthand :Tests {
+    my $people = [
+        {
+            name    => 'sally',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+        {
+            name    => 'Bob',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'wrestler',
+            }
+        },
+        {
+            name    => 'Robert',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'unemployed',
+            }
+        },
+    ];
+
+    my $nobody_likes_brussel_sprouts = none(
+        {
+            details => {
+                favorite_foods => ['brussel sprouts'],
+            }
+        },
+        $people,
+    );
+
+    is ($nobody_likes_brussel_sprouts, 1);
 }
 
 sub spread__returns_empty_list_when_args_undef :Tests {
@@ -939,7 +1046,6 @@ sub filter__returns_items_based_on_iteratee_shorthand :Tests {
         ]
     );
 }
-
 
 sub drop__returns_empty_array_when_empty_array :Tests {
     is_deeply(drop([]), []);
