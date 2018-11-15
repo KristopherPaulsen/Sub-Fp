@@ -27,8 +27,41 @@ use constant ARG_PLACE_HOLDER => {};
 my $cmp = Data::PatternCompare->new;
 
 sub _is_subset {
-    return $cmp->pattern_match($_[0], $_[1]);
+    my $coll    = shift;
+    my $pattern = _add_any_keyword_to_arrays(shift);
+    return $cmp->pattern_match($coll, $pattern);
 }
+
+sub _add_any_keyword_to_arrays {
+    my $pattern = shift;
+
+    if (!is_array($pattern) || !is_hash($pattern)) {
+        return;
+    }
+
+    if (is_array($pattern)) {
+        $pattern = [spread($pattern), ignore];
+    }
+
+    if (is_hash($pattern)) {
+        foreach values
+        add_any_keyword_to_arrays($value);
+    };
+}
+
+#{
+    #key => []
+    #key => {
+
+    #}
+    #key => {
+        #key => [
+            #{
+
+            #}
+        #]
+    #}
+#}
 
 sub __ { ARG_PLACE_HOLDER };
 
@@ -207,18 +240,9 @@ sub none {
     my $pred = shift;
     my $coll = shift // [];
 
-    if (!is_sub($pred)) {
-        return none(sub {
-            my $subset = shift;
-            return bool(_is_subset($subset, $pred));
-        }, $coll);
-    }
+    print Dumper some($pred, $coll);
 
-    my $bool = List::Util::none {
-        $pred->($_)
-    } @$coll;
-
-    return bool($bool);
+    return some($pred, $coll) ? 0 : 1;
 }
 
 sub incr {
@@ -994,36 +1018,6 @@ Iterates over elements of collection, returning the first element predicate retu
 
     # { name => 'sally', age => 25 }
 
-    # find also supports 'iteratee object shorthand'
-
-    my $people = [
-        {
-            name          => 'john',
-            age           => 25,
-            favorite_food => 'broccoli',
-        },
-        {
-            name          => 'Sally',
-            age           => 25,
-            favorite_food => 'oranges',
-        },
-        {
-            name          => 'Old Greg',
-            age           => 100,
-            favorite_food => 'you do not want to know,
-        }
-    ]
-
-    find({ favorite_food => 'broccoli' }, $people);
-
-    # [
-    #     {
-    #         name          => 'Sally',
-    #         age           => 25,
-    #         favorite_food => 'broccoli',
-    #     },
-    # ]
-
 =cut
 
 =head2 filter
@@ -1059,17 +1053,6 @@ Iterates over elements of collection, returning only elements the predicate retu
     #        name => 'Sally',
     #        age => 25,
     #    }
-    # ]
-
-    # Filter also supports 'iteratee object shorthand'
-
-    filter({ name => 'John' }, $people);
-
-    # [
-    #    {
-    #        name => 'john',
-    #        age  => 25,
-    #    },
     # ]
 
 =cut
@@ -1108,12 +1091,6 @@ If one element is found to return truthy for the given predicate, none returns 0
 
     # 1
 
-    # none also supports 'iteratee object shorthand'
-
-    none({ name => 'Black Bart' }, $people);
-
-    # 1
-
 =cut
 
 =head2 every
@@ -1135,30 +1112,6 @@ return truthy. If all elements cause predicate to return truthy, every returns 1
 
     # 0
 
-    # every also supports 'iteratee object shorthand'
-
-    my $people = [
-        {
-            name => 'john',
-            age => 25,
-            favorite_food => 'broccoli',
-        },
-        {
-            name => 'Sally',
-            age => 25,
-            favorite_food => 'broccoli',
-        },
-        {
-            name => 'Old Greg',
-            age => 100,
-            favorite_food => 'you do not want to know,
-        }
-    ]
-
-    every({ favorite_food => 'broccoli' }, $people)
-
-    # 0
-
 =cut
 
 =head2 some
@@ -1177,30 +1130,6 @@ Iteration is stopped once predicate returns truthy.
         my $num = shift;
         $num > 2;
     }, [1,2,3,4]);
-
-    # 1
-
-    # some also supports 'iteratee object shorthand'
-
-    my $people = [
-        {
-            name => 'john',
-            age => 25,
-            favorite_food => 'broccoli',
-        },
-        {
-            name => 'Sally',
-            age => 25,
-            favorite_food => 'broccoli',
-        },
-        {
-            name => 'Old Greg',
-            age => 100,
-            favorite_food => 'you do not want to know,
-        }
-    ]
-
-    some({ favorite_food => 'broccoli' }, $people)
 
     # 1
 

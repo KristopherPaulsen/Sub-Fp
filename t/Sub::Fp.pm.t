@@ -789,6 +789,40 @@ sub some__returns_true_when_atleast_one_item_matches_iteratee_shorthand :Tests {
     is ($a_teacher_is_named_sally, 1);
 }
 
+sub some__returns_false_when_no_items_match_iteratee_shorthand :Tests {
+    my $people = [
+        {
+            name    => 'Black Bart',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+        {
+            name    => 'Other Black Bart',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'wrestler',
+            }
+        },
+        {
+            name    => 'El Barto',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'unemployed',
+            }
+        },
+    ];
+
+    my $a_teacher_is_named_sally = some(
+        { details => { favorite_foods => ["brussel sprouts"] } },
+        $people,
+    );
+
+    is ($a_teacher_is_named_sally, 0);
+}
+
+
 sub none__returns_true_when_empty_args :Tests {
     is(none(sub{}, []), 1);
 }
@@ -818,7 +852,7 @@ sub none__returns_false_when_multi_matches_predicate :Tests {
     )
 }
 
-sub none__returns_true_when_no_items_matche_iteratee_shorthand :Tests {
+sub none__returns_true_when_no_items_match_iteratee_shorthand :Tests {
     my $people = [
         {
             name    => 'sally',
@@ -852,7 +886,44 @@ sub none__returns_true_when_no_items_matche_iteratee_shorthand :Tests {
         $people,
     );
 
-    is ($nobody_likes_brussel_sprouts, 1);
+    is($nobody_likes_brussel_sprouts, 1);
+}
+
+sub none__returns_false_when_an_item_matches_iteratee_shorthand :Tests {
+    my $people = [
+        {
+            name    => 'sally',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'teacher',
+            }
+        },
+        {
+            name    => 'Bob',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges"],
+                occupation     => 'wrestler',
+            }
+        },
+        {
+            name    => 'Robert',
+            details => {
+                favorite_foods => ["cheese", "bread", "oranges", "brussel sprouts"],
+                occupation     => 'unemployed',
+            }
+        },
+    ];
+
+    my $nobody_likes_brussel_sprouts = none(
+        {
+            details => {
+                favorite_foods => ["brussel sprouts"],
+            }
+        },
+        $people,
+    );
+
+    is($nobody_likes_brussel_sprouts, 0);
 }
 
 sub spread__returns_empty_list_when_args_undef :Tests {
@@ -1025,6 +1096,8 @@ sub filter__returns_items_based_on_iteratee_shorthand :Tests {
         },
         $people,
     );
+
+    print Dumper $teachers;
 
     is_deeply(
         $teachers,
