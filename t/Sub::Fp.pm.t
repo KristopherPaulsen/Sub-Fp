@@ -2,6 +2,7 @@ package Sub::Fp::Test;
 use warnings;
 use strict;
 use parent qw(Test::Class);
+use Data::Dumper qw(Dumper);
 use Test::More;
 use Sub::Fp qw(
 incr         reduces   flatten
@@ -13,6 +14,7 @@ none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
 is_sub      to_pairs  for_each    apply
+get
 );
 
 sub is_sub__returns_0_when_args_undef :Tests {
@@ -1101,6 +1103,64 @@ sub take_right__returns_new_array :Tests {
     my $array = [];
     ok($array != take($array))
 }
+
+
+
+sub get__returns_undef_when_args_undef :Tests {
+    is_deeply(get(), undef);
+}
+
+sub get__returns_value_at_single_level_hash_get :Tests {
+    my $hash = {
+        key1 => 'value1',
+    };
+
+    is_deeply(
+        get($hash, 'key1'),
+        'value1',
+    );
+}
+
+sub get__returns_value_at_single_level_array :Tests {
+    my $array = [100, 200, 300];
+
+    is_deeply(
+        get($array, 1),
+        200,
+    );
+}
+
+sub get__returns_value_at_single_level_string :Tests {
+    my $string = "String";
+
+    is_deeply(
+        get($string, 1),
+        "t",
+    );
+}
+
+sub get__returns_default_if_key_isnt_defined :Tests {
+    my $hash = {
+        key1 => 'value1'
+    };
+
+    is_deeply(
+        get($hash, 'nonKey', 'DEFAULT VALUE'),
+        "DEFAULT VALUE",
+    );
+}
+
+sub get__returns_value_not_default_when_value_falsy :Tests {
+    my $hash = {
+        key1 => 0,
+    };
+
+    is_deeply(
+        get($hash, 'key1', 'DEFAULT VALUE'),
+        0,
+    );
+}
+
 
 
 sub assoc_returns_undef_when_args_undef :Tests {

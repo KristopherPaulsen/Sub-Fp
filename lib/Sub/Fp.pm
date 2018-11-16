@@ -16,10 +16,10 @@ our @EXPORT_OK = qw(
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
     is_empty    is_sub   flow        eql
-    to_pairs    for_each apply
+    to_pairs    for_each apply       get
 );
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -33,6 +33,24 @@ sub identity {
     my $args = shift // undef;
 
     return $args;
+}
+
+sub get {
+    my $coll    = shift // [];
+    my $key     = shift // 0;
+    my $default = shift;
+
+    if (is_array($coll)) {
+        return defined $coll->[$key] ? $coll->[$key] : $default;
+    }
+
+    if (is_hash($coll)) {
+        return defined $coll->{$key} ? $coll->{$key} : $default;
+    }
+
+    my $string_coll = [spread($coll)];
+
+    return defined $string_coll->[$key] ? $string_coll->[$key] : $default;
 }
 
 sub apply {
@@ -487,7 +505,7 @@ concise code.
     len         to_keys    to_vals     is_array
     is_hash     every      noop        identity
     is_empty    is_sub     flow        eql
-    to_pairs    for_each   apply
+    to_pairs    for_each   apply       get
 
 =cut
 
@@ -892,6 +910,36 @@ Returns 1 if the argument is 'empty',
     is_empty("I am a string")
 
     # 0
+
+=cut
+
+=head2 get
+
+Returns value from hash, string, array based on key/idx provided.
+Returns default value if provided key/idx does not exist on collection.
+Only works one level deep;
+
+    my $hash = {
+        key1 => 'value1',
+    };
+
+    get($hash, 'key1');
+
+    # 'value1'
+
+
+    my $array = [100, 200, 300]
+
+    get($array, 1);
+
+    # 200
+
+
+    my $string = "Hello";
+
+    get($string, 1);
+
+    # e
 
 =cut
 
