@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(
     to_pairs    for_each
 );
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 use constant ARG_PLACE_HOLDER => {};
 
