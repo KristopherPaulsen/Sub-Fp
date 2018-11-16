@@ -3,8 +3,6 @@ use strict;
 use warnings;
 use Carp;
 use List::Util;
-use Data::Dumper qw(Dumper);
-use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr        reduces  flatten
@@ -17,9 +15,10 @@ our @EXPORT_OK = qw(
     is_hash     every    noop        identity
     is_empty    is_sub   flow        eql
     to_pairs    for_each apply       get
+    second
 );
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -248,6 +247,11 @@ sub decr {
 sub first {
     my $coll = shift;
     return @$coll[0];
+}
+
+sub second {
+    my $coll = shift;
+    return @$coll[1];
 }
 
 sub end {
@@ -496,16 +500,16 @@ concise code.
 
 =head1 EXPORT
 
-    incr        reduces    flatten
-    drop_right  drop       take_right  take
-    assoc       maps       decr        chain
-    first       end        subarray    partial
-    __          find       filter      some
-    none        uniq       bool        spread
-    len         to_keys    to_vals     is_array
-    is_hash     every      noop        identity
-    is_empty    is_sub     flow        eql
-    to_pairs    for_each   apply       get
+    incr         reduces   flatten
+    drop_right  drop      take_right  take
+    assoc       maps      decr        chain
+    first       end       subarray    partial
+    __          find      filter      some
+    none        uniq      bool        spread   every
+    len         is_array  is_hash     to_keys  to_vals
+    noop        identity  is_empty    flow     eql
+    is_sub      to_pairs  for_each    apply
+    get         second
 
 =cut
 
@@ -723,6 +727,20 @@ Creates a slice of array with n elements taken from the end.
     take_right(0, [1, 2, 3]);
 
     # []
+
+=cut
+
+=head2 second
+
+Returns the second item in an array
+
+    second(["I", "am", "a", "string"])
+
+    # "am"
+
+    second([5,4,3,2,1])
+
+    # 4
 
 =cut
 
