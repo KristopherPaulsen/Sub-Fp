@@ -2,7 +2,6 @@ package Sub::Fp::Test;
 use warnings;
 use strict;
 use parent qw(Test::Class);
-use Data::Dumper qw(Dumper);
 use Test::More;
 use Sub::Fp qw(
 incr         reduces   flatten
@@ -13,7 +12,7 @@ __          find      filter      some
 none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
-is_sub
+is_sub      to_pairs
 );
 
 sub is_sub__returns_0_when_args_undef :Tests {
@@ -754,6 +753,65 @@ sub none__returns_false_when_multi_matches_predicate :Tests {
 
 
 
+sub to_pairs__returns_empty_array_when_args_undef :Tests {
+    is_deeply(to_pairs(), []);
+}
+
+sub to_pairs__returns_empty_array_when_empty_array :Tests {
+    is_deeply(to_pairs([]), []);
+}
+
+sub to_pairs__returns_array_of_idx_val_from_array :Tests {
+    is_deeply(
+        to_pairs(["I", "am", "some", "strings"]),
+        [[0, "I"], [1, "am"], [2, "some"], [3, "strings"]]
+    )
+}
+
+sub to_pairs__returns_array_of_idx_val_from_multi_array :Tests {
+    is_deeply(
+        to_pairs(["I", "am", "some", ["nestedArray"]]),
+        [[0, "I"], [1, "am"], [2, "some"], [3, ["nestedArray"]]]
+    )
+}
+
+sub to_pairs__returns_array_of_key_value_pairs_from_hash :Tests {
+    my $result   = to_pairs({ someKey => 'someValue', someOtherKey => 'someOtherValue' });
+    my $expected = [['someKey', 'someValue'], ['someOtherKey', 'someOtherValue']];
+
+    is_deeply(
+        [sort @{ $result }],
+        [sort @{ $result }]
+    );
+}
+
+sub to_pairs__returns_array_of_key_value_pairs_from_nested_hash :Tests {
+    my $result = to_pairs({
+        someKey      => 'someValue',
+        someOtherKey => {
+            nested => 'nestedValue'
+        }
+    });
+    my $expected = [['someKey', 'someValue'], ['someOtherKey', { nested => 'nestedValue' }]];
+
+    is_deeply(
+        [sort @{ $result }],
+        [sort @{ $result }]
+    );
+}
+
+sub to_pairs__returns_array_of_idx_char_from_string :Tests {
+    my $result   = to_pairs("I am the string");
+    my $expected = [[0, "I"], [1, "am"], [2, "the"], [3, "string"]];
+
+    is_deeply(
+        [sort @{ $result }],
+        [sort @{ $result }]
+    );
+}
+
+
+
 sub spread__returns_empty_list_when_args_undef :Tests {
     is_deeply(
         [ spread() ],
@@ -845,6 +903,7 @@ sub filter__returns_multi_items_that_match_predicate :Tests {
         [3,4,5]
     );
 }
+
 
 
 sub drop__returns_empty_array_when_empty_array :Tests {

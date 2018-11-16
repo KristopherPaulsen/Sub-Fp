@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use Carp;
 use List::Util;
+use Data::Dumper qw(Dumper);
+use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr        reduces  flatten
@@ -14,6 +16,7 @@ our @EXPORT_OK = qw(
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
     is_empty    is_sub   flow        eql
+    to_pairs
 );
 
 our $VERSION = '0.13';
@@ -68,6 +71,29 @@ sub is_hash {
     return bool(ref $coll eq 'HASH');
 }
 
+sub to_pairs {
+    my $coll = shift // [];
+
+    if (is_array($coll)) {
+        return maps(sub {
+            my ($val, $idx) = @_;
+            return [$idx, $val]
+        }, $coll)
+    }
+
+    if (is_hash($coll)) {
+        return maps(sub {
+            my $key = shift;
+            return [$key, $coll->{$key}]
+        }, to_keys($coll))
+    }
+
+    return maps(sub {
+        my ($char, $idx) = @_;
+        return [$idx, $char];
+    }, to_vals($coll));
+}
+
 sub to_vals {
     my $coll = shift // [];
 
@@ -115,6 +141,16 @@ sub len {
     }
 
     return length($coll);
+}
+
+sub for_each {
+    my ($fn, $coll) = @_;
+    my $idx = 0;
+
+    foreach my $val (@{ $coll }) {
+        $idx++;
+        $fn->($val, $idx - 1, $coll);
+    }
 }
 
 sub is_empty {
