@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
     is_empty    is_sub   flow        eql
-    to_pairs
+    to_pairs    for_each
 );
 
 our $VERSION = '0.13';
@@ -503,6 +503,35 @@ Decrements the supplied number by 1
 
 =cut
 
+=head2 for_each
+
+Iterates over elements of collection and invokes iteratee for each element. The iteratee is invoked with three arguments: (value, index|key, collection).
+
+
+    for_each(sub {
+       my $num = shift;
+       print $num;
+    }, [1,2,3]);
+
+
+    for_each(sub {
+       my ($num, $idx, $coll) = @_;
+       print $idx;
+    }, [1,2,3])
+
+    # 0 1 2
+
+    for_each(sub {
+       my ($num, $idx, $coll) = @_;
+       print Dumper $coll;
+    }, [1,2,3])
+
+    #   [1,2,3],
+    #   [1,2,3],
+    #   [1,2,3]
+
+=cut
+
 =head2 maps
 
 Creates an array of values by running each element in collection thru iteratee.
@@ -916,6 +945,43 @@ Creates an array of the values in a hash, of an array, or string.
     to_vals("Hey");
 
     # ['H','e','y'];
+
+=cut
+
+=head2 to_pairs
+Creates an array of key-value, or idx-value pairs from arrays, hashes, and strings.
+If used on a hash, key-pair order can not be guaranteed;
+
+    to_pairs("I am a string");
+
+    # [
+    #  [0, "I"],
+    #  [1, "am"],
+    #  [2, "a"],
+    #  [3, "string"]
+    # ]
+
+    to_pairs([100, 101, 102]);
+
+    # [
+    #  [0, 100],
+    #  [1, 102],
+    #  [2, 103],
+    # ]
+
+    to_pairs({ key1 => 'value1', key2 => 'value2' });
+
+    # [
+    #   [key1, 'value1'],
+    #   [key2, 'value2']
+    # ]
+
+    to_pairs({ key1 => 'value1', key2 => { nested => 'nestedValue' }});
+
+    # [
+    #   [key1, 'value1'],
+    #   [key2, { nested => 'nestedValue' }]
+    # ]
 
 =cut
 

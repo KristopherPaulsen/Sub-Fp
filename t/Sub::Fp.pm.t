@@ -12,7 +12,7 @@ __          find      filter      some
 none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
-is_sub      to_pairs
+is_sub      to_pairs  for_each
 );
 
 sub is_sub__returns_0_when_args_undef :Tests {
@@ -358,6 +358,51 @@ sub noop__returns_undef_when_args_undef :Tests {
 sub noop__returns_undef_when_args_filled :Tests {
     is_deeply(noop("some", "args"), undef);
 }
+
+
+sub for_each__returns_undef_when_args_undef :Tests {
+    my $result   = for_each();
+    my $expected = undef;
+
+    is_deeply($result, $expected);
+}
+
+sub for_each__itterates_through_each_val_in_collection :Tests {
+
+    my $result = [];
+
+    for_each(sub {
+        my $val = shift;
+        push @{ $result }, $val;
+    }, [1,2,3]);
+
+    is_deeply($result, [1,2,3]);
+}
+
+sub for_each__itterates_and_can_use_idx_in_collection :Tests {
+
+    my $result = [];
+
+    for_each(sub {
+        my (undef, $idx) = @_;
+        push @{ $result }, $idx;
+    }, ["I", "am", "a", "string"]);
+
+    is_deeply($result, [0, 1, 2, 3]);
+}
+
+sub for_each__itterates_and_can_use_collection_ref :Tests {
+
+    my $result = [];
+
+    for_each(sub {
+        my (undef, undef, $coll) = @_;
+        push @{ $result }, $coll;
+    }, [1,2,3]);
+
+    is_deeply($result, [[1,2,3], [1,2,3], [1,2,3]]);
+}
+
 
 
 sub maps__returns_empty_array_when_args_undef :Tests {
