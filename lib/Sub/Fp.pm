@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(
     to_pairs    for_each apply       get
 );
 
-our $VERSION = '0.19';
+our $VERSION = '0.20';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -530,6 +530,7 @@ Decrements the supplied number by 1
 =cut
 
 =head2 apply
+
 Calls the supplied function with the array of arguments, spreading the
 arguments into the function it invokes
 
