@@ -3,8 +3,6 @@ use strict;
 use warnings;
 use Carp;
 use List::Util;
-use Data::Dumper qw(Dumper);
-use Data::PatternCompare;
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr        reduces  flatten
@@ -18,50 +16,11 @@ our @EXPORT_OK = qw(
     is_empty    is_sub   flow        eql
 );
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 use constant ARG_PLACE_HOLDER => {};
 
 # -----------------------------------------------------------------------------#
-
-my $cmp = Data::PatternCompare->new;
-
-sub _is_subset {
-    my $coll    = shift;
-    my $pattern = _add_any_keyword_to_arrays(shift);
-    return $cmp->pattern_match($coll, $pattern);
-}
-
-sub _add_any_keyword_to_arrays {
-    my $pattern = shift;
-
-    if (!is_array($pattern) || !is_hash($pattern)) {
-        return;
-    }
-
-    if (is_array($pattern)) {
-        $pattern = [spread($pattern), ignore];
-    }
-
-    if (is_hash($pattern)) {
-        foreach values
-        add_any_keyword_to_arrays($value);
-    };
-}
-
-#{
-    #key => []
-    #key => {
-
-    #}
-    #key => {
-        #key => [
-            #{
-
-            #}
-        #]
-    #}
-#}
 
 sub __ { ARG_PLACE_HOLDER };
 
@@ -178,13 +137,6 @@ sub find {
     my $pred = shift;
     my $coll = shift // [];
 
-    if (!is_sub($pred)) {
-        return find(sub {
-            my $subset = shift;
-            return bool(_is_subset($subset, $pred))
-        }, $coll);
-    }
-
     return List::Util::first {
         $pred->($_)
     } @$coll;
@@ -194,13 +146,6 @@ sub filter {
     my $pred  = shift;
     my $coll = shift // [];
 
-    if (!is_sub($pred)) {
-        return filter(sub {
-            my $subset = shift;
-            return bool(_is_subset($subset, $pred))
-        }, $coll);
-    }
-
     return [grep { $pred->($_) } @$coll];
 }
 
@@ -208,26 +153,12 @@ sub some {
     my $pred = shift;
     my $coll = shift // [];
 
-    if (!is_sub($pred)) {
-        return some(sub {
-            my $subset = shift;
-            return bool(_is_subset($subset, $pred))
-        }, $coll);
-    }
-
     return bool(find($pred, $coll));
 }
 
 sub every {
     my $pred = shift;
     my $coll = shift // [];
-
-    if (!is_sub($pred)) {
-        return every(sub {
-            my $subset = shift;
-            return bool(_is_subset($subset, $pred));
-        }, $coll);
-    }
 
     my $bool = List::Util::all {
         $pred->($_);
@@ -239,8 +170,6 @@ sub every {
 sub none {
     my $pred = shift;
     my $coll = shift // [];
-
-    print Dumper some($pred, $coll);
 
     return some($pred, $coll) ? 0 : 1;
 }
