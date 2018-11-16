@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     len         to_keys  to_vals     is_array
     is_hash     every    noop        identity
     is_empty    is_sub   flow        eql
-    to_pairs    for_each
+    to_pairs    for_each apply
 );
 
 our $VERSION = '0.14';
@@ -33,6 +33,13 @@ sub identity {
     my $args = shift // undef;
 
     return $args;
+}
+
+sub apply {
+    my $fn   = shift // sub {};
+    my $args = shift // [];
+
+    return $fn->(@{$args});
 }
 
 sub flow {
@@ -500,6 +507,24 @@ Decrements the supplied number by 1
     decr(2)
 
     # => 1
+
+=cut
+
+=head2 apply
+Calls the supplied function with the array of arguments, spreading the
+arguments into the function it invokes
+
+    my $sum_all_nums = sub {
+        my $num        = shift;
+        my $second_num = shift;
+
+        return $num + $second_num;
+    };
+
+    apply($sum_all_nums, [100, 200]);
+    # same as $sum_all_nums->(100, 200)
+
+    # => 300
 
 =cut
 

@@ -6,13 +6,13 @@ use Test::More;
 use Sub::Fp qw(
 incr         reduces   flatten
 drop_right  drop      take_right  take
-assoc       maps      decr      chain
+assoc       maps      decr        chain
 first       end       subarray    partial
 __          find      filter      some
 none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
-is_sub      to_pairs  for_each
+is_sub      to_pairs  for_each    apply
 );
 
 sub is_sub__returns_0_when_args_undef :Tests {
@@ -1289,6 +1289,43 @@ sub decr__returns_num_minus_one :Tests {
 
 sub decr__returns_num_minus_one_when_zero :Tests {
     is(decr(0), -1);
+}
+
+
+
+sub apply__calls_func_with_array_and_applies_as_args :Tests {
+    my $sum_all_nums = sub {
+        my $num        = shift;
+        my $second_num = shift;
+
+        return $num + $second_num;
+    };
+
+    my $result   = apply($sum_all_nums, [100, 200]);
+    my $expected = 300;
+
+    is($result, $expected);
+}
+
+sub apply__returns_undef_when_args_undef :Tests {
+    my $result   = apply();
+    my $expected = undef;
+
+    is_deeply($result, $expected);
+}
+
+sub apply__calls_func_with_empty_array :Tests {
+    my $sum_all_nums = sub {
+        my $num        = shift;
+        my $second_num = shift;
+
+        return $num + $second_num;
+    };
+
+    my $result   = apply($sum_all_nums, [100, 200]);
+    my $expected = 300;
+
+    is($result, $expected);
 }
 
 __PACKAGE__->runtests;
