@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(
     to_pairs    for_each apply
 );
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -478,15 +478,16 @@ concise code.
 
 =head1 EXPORT
 
-    incr        reduces  flatten
-    drop_right  drop     take_right  take
-    assoc       maps     decr        chain
-    first       end      subarray    partial
-    __          find     filter      some
-    none        uniq     bool        spread
-    len         to_keys  to_vals     is_array
-    is_hash     every    noop        identity
-    flow        eql
+    incr        reduces    flatten
+    drop_right  drop       take_right  take
+    assoc       maps       decr        chain
+    first       end        subarray    partial
+    __          find       filter      some
+    none        uniq       bool        spread
+    len         to_keys    to_vals     is_array
+    is_hash     every      noop        identity
+    is_empty    is_sub     flow        eql
+    to_pairs    for_each   apply
 
 =cut
 
