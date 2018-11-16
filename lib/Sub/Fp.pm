@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(
     to_pairs    for_each apply
 );
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -975,6 +975,7 @@ Creates an array of the values in a hash, of an array, or string.
 =cut
 
 =head2 to_pairs
+
 Creates an array of key-value, or idx-value pairs from arrays, hashes, and strings.
 If used on a hash, key-pair order can not be guaranteed;
 
