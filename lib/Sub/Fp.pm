@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(
     to_pairs    for_each apply       get
 );
 
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -940,6 +940,17 @@ Only works one level deep;
     get($string, 1);
 
     # e
+
+
+    # Also has the ability to supply default-value when key/idx does not exist
+
+    my $hash = {
+        key1 => 'value1',
+    };
+
+    get($hash, 'key2', "DEFAULT HERE");
+
+    # 'DEFAULT HERE'
 
 =cut
 
