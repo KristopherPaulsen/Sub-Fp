@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Carp;
 use List::Util;
+use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr        reduces  flatten
@@ -33,6 +34,35 @@ sub identity {
 
     return $args;
 }
+
+sub range {
+    my $start      = shift;
+    my $end        = shift;
+    my $step       = shift;
+    my $val_is_neg = ($end // $end < 0 ? 1 : 0);
+
+    if (!$start) {
+        return [];
+    }
+
+    if (!$end) {
+        return range(0, $start, 0);
+    }
+
+    if (!$step) {
+        return range($start, $end, 0)
+    }
+
+    my $list = [];
+
+    for (my $val = 0; $val_is_neg ? $val > $end : $val < $end; $val += $step) {
+        push(@{ $list }, $val)
+    }
+
+    return $list;
+}
+
+print Dumper(range(4));
 
 sub get {
     my $coll    = shift // [];
