@@ -20,6 +20,46 @@ sub range__returns_empty_array_when_args_undef :Tests {
     is_deeply(range(), []);
 }
 
+sub range__returns_list_when_positive_start :Tests {
+    is_deeply(range(4), [0, 1,2,3]);
+}
+
+sub range__returns_list_when_negative_start :Tests {
+    is_deeply(range(-4), [0, -1, -2, -3]);
+}
+
+sub range__returns_list_when_positive_start_end :Tests {
+    is_deeply(range(1,10), [1,2,3,4,5,6,7,8,9])
+}
+
+sub range__returns_list_when_negative_start_end :Tests {
+    is_deeply(range(-1, -10), [-1, -2, -3, -4, -5, -6, -7, -8, -9]);
+}
+
+sub range__returns_list_when_zero_start_positive_end_step :Tests {
+    is_deeply(range(0,20,5), [0, 5, 10, 15]);
+}
+
+sub range__returns_list_when_zero_start_negative_end_step:Tests {
+    is_deeply(range(0, -4, -1), [0, -1, -2, -3]);
+}
+
+sub range__returns_list_when_positive_start_end_step :Tests {
+    is_deeply(range(1, 10, 1), [1,2,3,4,5,6,7,8,9]);
+}
+
+sub range__returns_list_when_negative_start_end_step :Tests {
+    is_deeply(range(-1, -10, -1), [-1, -2, -3, -4, -5, -6, -7, -8, -9]);
+}
+
+sub range__returns_list_when_negative_start_end_positive_step_and_start_less_then_end :Tests {
+    is_deeply(range(-100, -4, 100), [ -100 ]);
+}
+
+sub range__returns_empty_array_when_impossible_range :Tests {
+    is_deeply(range(0, -4, 1), []);
+}
+
 sub is_sub__returns_0_when_args_undef :Tests {
     is(is_sub(), 0);
 }

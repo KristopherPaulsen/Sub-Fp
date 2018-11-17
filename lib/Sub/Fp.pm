@@ -2,6 +2,7 @@ package Sub::Fp;
 use strict;
 use warnings;
 use Carp;
+use POSIX;
 use List::Util;
 use Data::Dumper qw(Dumper);
 use Exporter qw(import);
@@ -53,11 +54,11 @@ sub range {
         return range($start, $end, $end < 0 ? -1 : 1);
     }
 
-    if ($step > 0 && $end < 0) {
+    if ($start > $end && $step > 0) {
         return []
     }
 
-    my $loop_count = abs(($end - $start) / ($step || 1));
+    my $loop_count = ceil(abs(($end - $start) / ($step || 1)));
     my $list       = [];
 
     while ($loop_count) {
