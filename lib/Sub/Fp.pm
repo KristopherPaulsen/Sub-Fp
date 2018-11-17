@@ -54,8 +54,8 @@ sub range {
         return range($start, $end, $end < 0 ? -1 : 1);
     }
 
-    if ($start > $end && $step > 0) {
-        return []
+    if (_is_nonsense_range($start, $end, $step)) {
+        return [];
     }
 
     my $loop_count = ceil(abs(($end - $start) / ($step || 1)));
@@ -69,6 +69,25 @@ sub range {
     }
 
     return $list;
+}
+
+sub _is_nonsense_range {
+    my ($start, $end, $step) = @_;
+
+    if ($start == $end &&
+        $end == $step) {
+        return 1;
+    }
+
+    if ($start > $end &&
+        $step >= 0 ) {
+        return 1;
+    }
+
+    if ($start < $end &&
+        $step < 0) {
+        return 1;
+    }
 }
 
 sub get {
