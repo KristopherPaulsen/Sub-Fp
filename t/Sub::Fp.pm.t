@@ -13,8 +13,12 @@ none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
 is_sub      to_pairs  for_each    apply
-get         second
+get         second    range
 );
+
+sub range__returns_empty_array_when_args_undef :Tests {
+    is_deeply(range(), []);
+}
 
 sub is_sub__returns_0_when_args_undef :Tests {
     is(is_sub(), 0);

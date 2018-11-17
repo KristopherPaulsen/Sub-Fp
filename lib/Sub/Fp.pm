@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     is_hash     every    noop        identity
     is_empty    is_sub   flow        eql
     to_pairs    for_each apply       get
-    second
+    second      range
 );
 
 our $VERSION = '0.21';
@@ -35,34 +35,40 @@ sub identity {
     return $args;
 }
 
+# Forgive me below father, for I have sinned.
+# Seriously, I can't figure a simpler way to do this...
+# TODO: Please refactor this eventually...
 sub range {
-    my $start      = shift;
-    my $end        = shift;
-    my $step       = shift;
-    my $val_is_neg = ($end // $end < 0 ? 1 : 0);
+    my ($start, $end, $step) = @_;
 
-    if (!$start) {
+    if (!defined $start) {
         return [];
     }
 
-    if (!$end) {
-        return range(0, $start, 0);
+    if (!defined $end) {
+        return range(0, $start, $start < 0 ? -1 : 1);
     }
 
-    if (!$step) {
-        return range($start, $end, 0)
+    if (!defined $step) {
+        return range($start, $end, $end < 0 ? -1 : 1);
     }
 
-    my $list = [];
+    if ($step > 0 && $end < 0) {
+        return []
+    }
 
-    for (my $val = 0; $val_is_neg ? $val > $end : $val < $end; $val += $step) {
-        push(@{ $list }, $val)
+    my $loop_count = abs(($end - $start) / ($step || 1));
+    my $list       = [];
+
+    while ($loop_count) {
+        push(@{ $list }, $start);
+
+        $start+=$step;
+        $loop_count-=1;
     }
 
     return $list;
 }
-
-print Dumper(range(4));
 
 sub get {
     my $coll    = shift // [];
