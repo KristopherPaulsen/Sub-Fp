@@ -109,9 +109,8 @@ sub range__returns_list_of_same_num_when_step_zero :Tests {
 }
 
 sub range__returns_empty_array_when_negative_numbers_and_zero_step :Tests {
-    is_deeply(range(-1, -4, 0), []);
+    is_deeply(range(-1, -4, 0), [-1, -1, -1]);
 }
-
 
 
 sub is_sub__returns_0_when_args_undef :Tests {

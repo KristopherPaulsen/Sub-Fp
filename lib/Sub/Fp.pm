@@ -79,6 +79,14 @@ sub _is_nonsense_range {
         return 1;
     }
 
+    #TODO Refactor this...;
+    if ($start > $end &&
+        $step == 0 &&
+        $start < 0 &&
+        $end < 0) {
+        return 0;
+    }
+
     if ($start > $end &&
         $step >= 0 ) {
         return 1;
