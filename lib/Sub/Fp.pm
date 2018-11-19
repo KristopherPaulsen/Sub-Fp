@@ -616,6 +616,24 @@ arguments into the function it invokes
 
 =cut
 
+=head2 range
+
+
+
+    my $sum_all_nums = sub {
+        my $num        = shift;
+        my $second_num = shift;
+
+        return $num + $second_num;
+    };
+
+    apply($sum_all_nums, [100, 200]);
+    # same as $sum_all_nums->(100, 200)
+
+    # => 300
+
+=cut
+
 =head2 for_each
 
 Iterates over elements of collection and invokes iteratee for each element. The iteratee is invoked with three arguments: (value, index|key, collection).
