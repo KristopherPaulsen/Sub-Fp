@@ -20,7 +20,7 @@ our @EXPORT_OK = qw(
     second      range
 );
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 use constant ARG_PLACE_HOLDER => {};
 
