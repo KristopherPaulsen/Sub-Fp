@@ -467,30 +467,30 @@ sub partial {
 }
 
 sub _fill_holders {
-    my ($oldArgs, $newArgs) = @_;
+    my ($old_args, $new_args) = @_;
 
-    if (len($newArgs) == 0) {
-        return $oldArgs
+    if (len($new_args) == 0) {
+        return $old_args
     }
 
-    if (len($oldArgs) == 0) {
-        return $newArgs;
+    if (len($old_args) == 0) {
+        return $new_args;
     }
 
-    my $filled_args = [];
-    my $oldArgsLen  = len($oldArgs);
+    my $filled_args  = [];
+    my $old_args_len = len($old_args);
 
-    for (my $idx=0; $idx < $oldArgsLen; $idx++) {
-        my $arg = shift @{ $oldArgs };
+    for (my $idx=0; $idx < $old_args_len; $idx++) {
+        my $arg = shift @{ $old_args };
 
         if (eql($arg, __)) {
-            push @{ $filled_args }, (shift @{ $newArgs });
+            push @{ $filled_args }, (shift @{ $new_args });
         } else {
             push @{ $filled_args }, $arg;
         }
 
-        if ($oldArgsLen == ($idx + 1)) {
-            push @{ $filled_args }, @{ $newArgs };
+        if ($old_args_len == ($idx + 1)) {
+            push @{ $filled_args }, @{ $new_args };
         }
     }
 
