@@ -323,9 +323,9 @@ sub partial__returns_partially_applied_func_all_args_applied :Tests {
         return $a + $b + $c;
     };
 
-    my $add_two_nums = partial($add_three_nums, 1, 1, 1);
+    my $add_two_nums = partial($add_three_nums, 1, 2, 3);
 
-    is($add_two_nums->(), 3);
+    is($add_two_nums->(), 6);
 }
 
 sub partial__returns_partially_applied_func_using_placeholder_and_implict_last_arg :Tests {
@@ -393,21 +393,6 @@ sub partial__returns_partially_applied_func_with_placeholders_odd_placement :Tes
 
     is_deeply(
         $add_two_strings->("first ", "second ", "fourth "),
-        "first second third fourth "
-    );
-}
-
-sub partial__:Tests {
-    my $add_four_strings = sub {
-        my ($a, $b, $c, $d) = @_;
-
-        return $a . $b . $c . $d;
-    };
-
-    my $add_three_strings = partial($add_four_strings, __ , __, "third ", __);
-
-    is_deeply(
-        $add_three_strings->("first ", "second ", "fourth "),
         "first second third fourth "
     );
 }

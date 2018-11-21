@@ -466,21 +466,15 @@ sub partial {
     }
 }
 
+
+#Once again, forgive me for I have sinned...
 sub _fill_holders {
     my ($old_args, $new_args) = @_;
-
-    if (len($new_args) == 0) {
-        return $old_args
-    }
-
-    if (len($old_args) == 0) {
-        return $new_args;
-    }
 
     my $filled_args  = [];
     my $old_args_len = len($old_args);
 
-    for (my $idx=0; $idx < $old_args_len; $idx++) {
+    for (my $idx = 0; $idx < $old_args_len; $idx++) {
         my $arg = shift @{ $old_args };
 
         if (eql($arg, __)) {
