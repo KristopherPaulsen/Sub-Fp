@@ -4,6 +4,7 @@ use warnings;
 use Carp;
 use POSIX;
 use List::Util;
+use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr        reduces  flatten
@@ -468,19 +469,32 @@ sub partial {
 sub _fill_holders {
     my ($oldArgs, $newArgs) = @_;
 
-    if (none(sub { eql($_[0], __) }, $oldArgs)) {
-        return [@$oldArgs, @$newArgs];
+    if (len($newArgs) == 0) {
+        return $oldArgs
     }
 
-    return reduces(sub {
-        my ($args, $arg) = @_;
+    if (len($oldArgs) == 0) {
+        return $newArgs;
+    }
 
-        if (!eql($arg, __)) {
-            return [spread($args), $arg]
+    my $filled_args = [];
+    my $oldArgsLen  = len($oldArgs);
+
+    for (my $idx=0; $idx < $oldArgsLen; $idx++) {
+        my $arg = shift @{ $oldArgs };
+
+        if (eql($arg, __)) {
+            push @{ $filled_args }, (shift @{ $newArgs });
+        } else {
+            push @{ $filled_args }, $arg;
         }
 
-        return [spread($args), shift @{ $newArgs }]
-    }, [], [spread($oldArgs), spread($newArgs)]);
+        if ($oldArgsLen == ($idx + 1)) {
+            push @{ $filled_args }, @{ $newArgs };
+        }
+    }
+
+    return $filled_args;
 }
 
 sub subarray {
@@ -512,8 +526,8 @@ sub chain {
 }
 
 sub eql {
-    my $arg1 = shift // __;
-    my $arg2 = shift // __;
+    my $arg1 = shift;
+    my $arg2 = shift;
 
     if (ref $arg1 ne ref $arg2) {
         return 0;
