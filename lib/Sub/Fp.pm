@@ -618,19 +618,53 @@ arguments into the function it invokes
 
 =head2 range
 
+Creates an array of numbers (positive and/or negative) progressing from start up to, but not including, end.
+A step of -1 is used if a negative start is specified without an end or step.
+If end is not specified, it's set to start with start then set to 0.
+
+    range(10);
+
+    # [1,2,3,4,5,6,7,8,9]
 
 
-    my $sum_all_nums = sub {
-        my $num        = shift;
-        my $second_num = shift;
+    range(1,10);
 
-        return $num + $second_num;
-    };
+    # [1,2,3,4,5,6,7,8,9]
 
-    apply($sum_all_nums, [100, 200]);
-    # same as $sum_all_nums->(100, 200)
+    range(-1, -10);
 
-    # => 300
+    # [-1, -2, -3, -4, -5, -6 ,-7, -8, -9]
+
+    range(1, 4, 0);
+
+    # [1, 1, 1]
+
+
+    range(-1, -4, 0);
+
+    # [-1, -1, -1]
+
+
+    #Ranges that "dont make sense" will return empty arrays
+
+
+    range(100, 1, 0)
+
+    # []
+
+    range(0,0,0)
+
+    # []
+
+    range(0, -100, 100)
+
+    # []
+
+    range(0, 100, -100)
+
+    # []
+
+    #etc...
 
 =cut
 
