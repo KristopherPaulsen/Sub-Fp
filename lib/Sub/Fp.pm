@@ -4,7 +4,6 @@ use warnings;
 use Carp;
 use POSIX;
 use List::Util;
-use Data::Dumper qw(Dumper);
 use Exporter qw(import);
 our @EXPORT_OK = qw(
     incr        reduces  flatten
@@ -20,7 +19,7 @@ our @EXPORT_OK = qw(
     second      range
 );
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 use constant ARG_PLACE_HOLDER => {};
 
