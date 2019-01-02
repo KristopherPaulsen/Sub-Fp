@@ -20,7 +20,7 @@ our @EXPORT_OK = qw(
     second      range
 );
 
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -77,14 +77,6 @@ sub _is_nonsense_range {
     if ($start == $end &&
         $end == $step) {
         return 1;
-    }
-
-    #TODO Refactor this...;
-    if ($start > $end &&
-        $step == 0 &&
-        $start < 0 &&
-        $end < 0) {
-        return 0;
     }
 
     if ($start > $end &&
@@ -647,13 +639,11 @@ If end is not specified, it's set to start with start then set to 0.
     # [1, 1, 1]
 
 
+    #Ranges that "dont make sense" will return empty arrays
+
     range(-1, -4, 0);
 
     # [-1, -1, -1]
-
-
-    #Ranges that "dont make sense" will return empty arrays
-
 
     range(100, 1, 0)
 
