@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
     shifts      unshifts
 );
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -668,7 +668,7 @@ If end is not specified, it's set to start with start then set to 0.
 
     range(-1, -4, 0);
 
-    # [-1, -1, -1]
+    # []
 
     range(100, 1, 0)
 
