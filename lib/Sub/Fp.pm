@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
     shifts      unshifts
 );
 
-our $VERSION = '0.28';
+our $VERSION = '0.29';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -120,7 +120,7 @@ sub flow {
     my $args = [@_];
 
     if (ref $args->[0] ne 'CODE') {
-        carp("Expected a function as first argument");
+        return \&noop;
     }
 
     return sub {
