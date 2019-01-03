@@ -335,29 +335,29 @@ sub flatten {
     ];
 }
 
-sub drop {
+sub _prepare_args {
     my $args     = [@_];
     my $count    = len($args) > 1 ? $args->[0] : 1;
     my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
     my $coll_len = len($coll);
+
+    return ($coll, $count, $coll_len)
+}
+
+sub drop {
+    my ($coll, $count, $coll_len) = _prepare_args(@_);
 
     return [@$coll[$count .. $coll_len - 1]];
 }
 
 sub drop_right {
-    my $args     = [@_];
-    my $count    = len($args) > 1 ? $args->[0] : 1;
-    my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
-    my $coll_len = len($coll);
+    my ($coll, $count, $coll_len) = _prepare_args(@_);
 
     return [@$coll[0 .. ($coll_len - ($count + 1))]];
 }
 
 sub take {
-    my $args     = [@_];
-    my $count    = len($args) > 1 ? $args->[0] : 1;
-    my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
-    my $coll_len = len($coll);
+    my ($coll, $count, $coll_len) = _prepare_args(@_);
 
     if (!$coll_len) {
         return [];
@@ -371,10 +371,7 @@ sub take {
 }
 
 sub take_right {
-    my $args     = [@_];
-    my $count    = len($args) > 1 ? $args->[0] : 1;
-    my $coll     = len($args) > 1 ? $args->[1] : $args->[0];
-    my $coll_len = len($coll);
+    my ($coll, $count, $coll_len) = _prepare_args(@_);
 
     if (!$coll_len) {
         return [];
