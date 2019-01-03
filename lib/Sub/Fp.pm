@@ -534,8 +534,8 @@ sub chain {
 }
 
 sub eql {
-    my $arg1 = shift;
-    my $arg2 = shift;
+    my $arg1 = shift // '';
+    my $arg2 = shift // '';
 
     if (ref $arg1 ne ref $arg2) {
         return 0;
