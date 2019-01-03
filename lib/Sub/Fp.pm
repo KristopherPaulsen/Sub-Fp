@@ -17,10 +17,11 @@ our @EXPORT_OK = qw(
     is_hash     every    noop        identity
     is_empty    is_sub   flow        eql
     to_pairs    for_each apply       get
-    second      range
+    second      range    pops        pushes
+    shifts      unshifts
 );
 
-our $VERSION = '0.24';
+our $VERSION = '0.27';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -77,14 +78,6 @@ sub _is_nonsense_range {
     if ($start == $end &&
         $end == $step) {
         return 1;
-    }
-
-    #TODO Refactor this...;
-    if ($start > $end &&
-        $step == 0 &&
-        $start < 0 &&
-        $end < 0) {
-        return 0;
     }
 
     if ($start > $end &&
@@ -333,6 +326,30 @@ sub flatten {
             ref $_ ? @{$_} : $_;
         } @$coll
     ];
+}
+
+sub pops {
+    my ($array, $val) = @_;
+
+    return pop @{$array};
+}
+
+sub pushes {
+    my ($array, $val) = @_;
+
+    return push @{$array}, $val;
+}
+
+sub shifts {
+    my ($array, $val) = @_;
+
+    return shift @{$array};
+}
+
+sub unshifts {
+    my ($array, $val) = @_;
+
+    return unshift @{$array}, $val;
 }
 
 sub _prepare_args {
@@ -644,13 +661,11 @@ If end is not specified, it's set to start with start then set to 0.
     # [1, 1, 1]
 
 
-    range(-1, -4, 0);
-
-    # [-1, -1, -1]
-
-
     #Ranges that "dont make sense" will return empty arrays
 
+    range(-1, -4, 0);
+
+    # []
 
     range(100, 1, 0)
 
@@ -759,6 +774,25 @@ Flattens array a single level deep.
     flatten([1,1,1, [2,2,2]]);
 
     # [1,1,1,2,2,2];
+
+=cut
+
+=head2 pop / pushes / shifts / unshifts
+
+Works the same as builtin pop / push etc etc, with mutations,
+except it uses references instead of @ lists.
+
+    my $array = [1,2,3];
+
+    pops($array)
+
+    # 1
+
+    my $array = [1,2,3];
+
+    pushes($array, 4);
+
+    # [1,2,3,4]
 
 =cut
 

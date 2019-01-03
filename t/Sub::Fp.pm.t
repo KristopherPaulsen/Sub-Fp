@@ -13,7 +13,8 @@ none        uniq      bool        spread   every
 len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
 is_sub      to_pairs  for_each    apply
-get         second    range
+get         second    range       pops     pushes
+shifts      unshifts
 );
 
 sub range__returns_empty_array_when_args_undef :Tests {
@@ -107,11 +108,6 @@ sub range__returns_empty_when_start_and_end_are_same_with_positive_step :Tests {
 sub range__returns_list_of_same_num_when_step_zero :Tests {
     is_deeply(range(1, 4, 0), [1,1,1]);
 }
-
-sub range__returns_empty_array_when_negative_numbers_and_zero_step :Tests {
-    is_deeply(range(-1, -4, 0), [-1, -1, -1]);
-}
-
 
 sub is_sub__returns_0_when_args_undef :Tests {
     is(is_sub(), 0);
@@ -1061,6 +1057,78 @@ sub filter__returns_multi_items_that_match_predicate :Tests {
         filter(sub { $_[0] > 2}, [1,2,3,4,5]),
         [3,4,5]
     );
+}
+
+
+
+sub pops__returns_last_item_in_array :Tests {
+    my $array = [1,2,3];
+
+    my $result = pops($array);
+
+    is($result, 3);
+}
+
+sub pops__mutates_array :Tests {
+    my $array = [1,2,3];
+
+    pops($array);
+
+    is_deeply($array, [1,2]);
+}
+
+
+
+sub pushes__adds_item_to_array_with_mutation :Tests {
+    my $array = [1,2,3];
+
+    pushes($array, 4);
+
+    is_deeply($array, [1,2,3,4])
+}
+
+sub pushes__returns_array_length :Tests {
+    my $array = [1,2,3];
+
+    my $new_length = pushes($array, 4);
+
+    is($new_length, 4);
+}
+
+
+
+sub shifts__returns_first_item_in_array :Tests {
+    my $array = [1,2,3];
+
+    my $result = shifts($array);
+
+    is($result, 1);
+}
+
+sub shifts__mutates_array :Tests {
+    my $array = [1,2,3];
+
+    pops($array);
+
+    is_deeply($array, [1,2]);
+}
+
+
+
+sub unshifts__adds_item_to_array_with_mutation :Tests {
+    my $array = [1,2,3];
+
+    unshifts($array, 4);
+
+    is_deeply($array, [4,1,2,3])
+}
+
+sub unshifts__returns_array_length :Tests {
+    my $array = [1,2,3];
+
+    my $new_length = unshifts($array, 4);
+
+    is($new_length, 4);
 }
 
 
