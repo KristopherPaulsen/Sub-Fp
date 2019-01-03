@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
     shifts      unshifts
 );
 
-our $VERSION = '0.29';
+our $VERSION = '0.30';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -786,7 +786,7 @@ except it uses references instead of @ lists.
 
     pops($array)
 
-    # 1
+    # 3
 
     my $array = [1,2,3];
 
