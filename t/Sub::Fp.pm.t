@@ -14,8 +14,39 @@ len         is_array  is_hash     to_keys  to_vals
 noop        identity  is_empty    flow     eql
 is_sub      to_pairs  for_each    apply
 get         second    range       pops     pushes
-shifts      unshifts
+shifts      unshifts  once
 );
+
+sub once__returns_code_ref_when_args_undef :Tests {
+    ok(ref once() eq 'CODE');
+}
+
+sub once__returns_func_that_can_only_be_called_once :Tests {
+    my $times_called = 0;
+    my $sub          = once(sub {
+        $times_called++;
+    });
+
+    $sub->();
+    $sub->();
+    $sub->();
+
+    is($times_called, 1);
+}
+
+sub once__returns_result_from_first_call_without_reinvoking :Tests {
+    my $times_called = 0;
+    my $sub          = once(sub {
+        $times_called++;
+        return "I was only called $times_called times"
+    });
+
+    $sub->();
+    $sub->();
+    my $result = $sub->();
+
+    is($result, "I was only called 1 times");
+}
 
 sub range__returns_empty_array_when_args_undef :Tests {
     is_deeply(range(), []);

@@ -18,7 +18,7 @@ our @EXPORT_OK = qw(
     is_empty    is_sub   flow        eql
     to_pairs    for_each apply       get
     second      range    pops        pushes
-    shifts      unshifts
+    shifts      unshifts once
 );
 
 our $VERSION = '0.30';
@@ -35,6 +35,22 @@ sub identity {
     my $args = shift // undef;
 
     return $args;
+}
+
+sub once {
+    my $func            = shift // \&noop;
+    my $was_called_once = 0;
+    my $result;
+
+    return sub {
+        if ($was_called_once) {
+            return $result;
+        }
+
+        $was_called_once++;
+        $result = $func->(@_);
+        return $result;
+    }
 }
 
 # Forgive me below father, for I have sinned.
@@ -615,6 +631,23 @@ Decrements the supplied number by 1
     decr(2)
 
     # => 1
+
+=cut
+
+=head2 once
+
+Creates a function that is restricted to invoking func once.
+Repeat calls to the function return the value of the first invocation.
+
+    my $times_called = 0;
+    my $sub          = once(sub {
+        $times_called++;
+        return "I was only called $times_called time"
+    });
+
+    $sub->(); # "I was only called 1 time"
+    $sub->(); # "I was only called 1 time"
+    $sub->(); # etc
 
 =cut
 
