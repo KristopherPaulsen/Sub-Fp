@@ -223,6 +223,28 @@ sub flow__returns_func_that_evaluates_to_composition_of_funcs :Tests {
     is($func->(1), 3);
 }
 
+sub flow__returns_composed_funcstions_into_higher_order_func :Tests {
+    my $addOne = sub {
+        my $sub = shift;
+
+        return sub {
+            my $num = shift;
+            return $sub->($num + 1);
+        }
+    };
+
+    my $sub = flow(
+        $addOne,
+        $addOne,
+        $addOne,
+    )->(sub {
+        my $num = shift;
+        return $num;
+    });
+
+    is($sub->(0), 3)
+}
+
 sub is_empty__returns_1_when_args_undef :Tests {
     is(is_empty(), 1);
 }
