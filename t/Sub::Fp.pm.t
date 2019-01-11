@@ -210,6 +210,7 @@ sub flow__returns_empty_sub_when_args_empty :Tests {
     is($func->(), undef);
 }
 
+
 sub flow__returns_func_ref_composed_of_passed_in_args :Tests {
     my $func = flow(\&incr, \&incr);
 

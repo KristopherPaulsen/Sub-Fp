@@ -124,8 +124,12 @@ sub flow {
     }
 
     return sub {
-        my $start_value = shift // noop;
-        chain($start_value, spread($args));
+        my $seed = shift // \&noop;
+
+        return List::Util::reduce {
+            my ($accum, $func) = ($a, $b);
+            $func->($accum);
+        } ($seed, spread($args));
     }
 }
 
