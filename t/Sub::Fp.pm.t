@@ -254,7 +254,7 @@ sub flow__returns_func_that_evaluates_to_composition_of_funcs :Tests {
     is($func->(1), 3);
 }
 
-sub flow__returns_composed_funcstions_into_higher_order_func :Tests {
+sub flow__returns_decorated_function_returning_3 :Tests {
     my $addOne = sub {
         my $sub = shift;
 

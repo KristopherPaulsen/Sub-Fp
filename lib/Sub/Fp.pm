@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
     shifts      unshifts once
 );
 
-our $VERSION = '0.31';
+our $VERSION = '0.32';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -148,15 +148,6 @@ sub flow {
         );
     }
 }
-
-    #my $sub = flow(
-        #$addOne,
-        #$addOne,
-        #$addOne,
-    #)->(sub {
-        #my $num = shift;
-        #return $num;
-    #});
 
 sub is_sub {
     my $sub = shift;
