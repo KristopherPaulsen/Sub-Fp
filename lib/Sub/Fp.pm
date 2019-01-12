@@ -133,21 +133,30 @@ sub apply {
 }
 
 sub flow {
-    my $args = [@_];
+    my $funcs = [@_];
 
-    if (ref $args->[0] ne 'CODE') {
+    if (ref $funcs->[0] ne 'CODE') {
         return \&noop;
     }
 
     return sub {
-        my $seed = shift // \&noop;
+        my $args = [@_];
 
-        return List::Util::reduce {
-            my ($accum, $func) = ($a, $b);
-            $func->($accum);
-        } ($seed, spread($args));
+        return chain(
+            sub { first($funcs)->(spread($args)) },
+            spread(drop($funcs)),
+        );
     }
 }
+
+    #my $sub = flow(
+        #$addOne,
+        #$addOne,
+        #$addOne,
+    #)->(sub {
+        #my $num = shift;
+        #return $num;
+    #});
 
 sub is_sub {
     my $sub = shift;

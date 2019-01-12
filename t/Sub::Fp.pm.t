@@ -276,6 +276,18 @@ sub flow__returns_composed_funcstions_into_higher_order_func :Tests {
     is($sub->(0), 3)
 }
 
+sub flow__accepts_multiple_arguments_when_composing :Tests {
+    my $add_many = sub {
+        my ($num1, $num2, $num3) = @_;
+
+        return $num1 + $num2 + $num3;
+    };
+
+    my $sub = flow($add_many);
+
+    is($sub->(100, 100, 100), 300);
+}
+
 sub is_empty__returns_1_when_args_undef :Tests {
     is(is_empty(), 1);
 }
