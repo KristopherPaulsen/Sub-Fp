@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
     shifts      unshifts  once
 );
 
-our $VERSION = '0.34';
+our $VERSION = '0.35';
 
 use constant ARG_PLACE_HOLDER => {};
 
