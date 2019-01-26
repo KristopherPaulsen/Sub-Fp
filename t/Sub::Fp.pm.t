@@ -461,25 +461,6 @@ sub partial__returns_partially_applied_func_with_placeholders_odd_placement :Tes
     );
 }
 
-sub partial__returns_partially_applied_func_callable_multi_times :Tests {
-    my $add_two_nums = sub {
-        my ($num1, $num2) = @_;
-        return $num1 + $num2;
-    };
-
-    my $add_one_num = partial($add_two_nums, __, 100);
-
-    $add_one_num->(100);
-    $add_one_num->(100);
-    $add_one_num->(100);
-    $add_one_num->(100);
-
-    is_deeply(
-        $add_one_num->(100),
-        200,
-    );
-}
-
 # ------------------------------------------------------------------------------
 
 sub to_vals__returns_empty_array_when_args_undef :Tests {
@@ -1407,7 +1388,7 @@ sub get__returns_value_at_single_level_hash_get :Tests {
     };
 
     is_deeply(
-        get($hash, 'key1'),
+        get('key1', $hash),
         'value1',
     );
 }
@@ -1416,7 +1397,7 @@ sub get__returns_value_at_single_level_array :Tests {
     my $array = [100, 200, 300];
 
     is_deeply(
-        get($array, 1),
+        get(1, $array),
         200,
     );
 }
@@ -1425,7 +1406,7 @@ sub get__returns_value_at_single_level_string :Tests {
     my $string = "String";
 
     is_deeply(
-        get($string, 1),
+        get(1, $string),
         "t",
     );
 }
@@ -1436,7 +1417,7 @@ sub get__returns_default_if_key_isnt_defined :Tests {
     };
 
     is_deeply(
-        get($hash, 'nonKey', 'DEFAULT VALUE'),
+        get('nonKey', $hash, 'DEFAULT VALUE'),
         "DEFAULT VALUE",
     );
 }
@@ -1447,7 +1428,7 @@ sub get__returns_value_not_default_when_value_falsy :Tests {
     };
 
     is_deeply(
-        get($hash, 'key1', 'DEFAULT VALUE'),
+        get('key1', $hash, 'DEFAULT VALUE'),
         0,
     );
 }

@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
     shifts      unshifts  once
 );
 
-our $VERSION = '0.36';
+our $VERSION = '0.37';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -117,13 +117,9 @@ sub _is_nonsense_range {
 }
 
 sub get {
-    my $coll    = shift // [];
     my $key     = shift // 0;
+    my $coll    = shift // [];
     my $default = shift;
-
-    if (_has_placeholders($coll, $key, $default)) {
-        return partial(\&get, $coll, $key, $default);
-    }
 
     if (is_array($coll)) {
         return defined $coll->[$key] ? $coll->[$key] : $default;
@@ -458,10 +454,6 @@ sub assoc {
 sub maps {
     my $func = shift;
     my $coll = shift;
-
-    if (_has_placeholders($func, $coll)) {
-        return partial(\&maps, $func, $coll);
-    }
 
     my $idx = 0;
 
@@ -1155,21 +1147,21 @@ Only works one level deep;
         key1 => 'value1',
     };
 
-    get($hash, 'key1');
+    get('key1', $hash);
 
     # 'value1'
 
 
     my $array = [100, 200, 300]
 
-    get($array, 1);
+    get(1, $array);
 
     # 200
 
 
     my $string = "Hello";
 
-    get($string, 1);
+    get(1, $string);
 
     # e
 
@@ -1180,7 +1172,7 @@ Only works one level deep;
         key1 => 'value1',
     };
 
-    get($hash, 'key2', "DEFAULT HERE");
+    get('key2', $hash, "DEFAULT HERE");
 
     # 'DEFAULT HERE'
 
