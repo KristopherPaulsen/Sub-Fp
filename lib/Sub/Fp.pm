@@ -29,6 +29,15 @@ use constant ARG_PLACE_HOLDER => {};
 
 sub __ { ARG_PLACE_HOLDER };
 
+sub _has_placeholders {
+    foreach my $arg (@_) {
+        if (ref($arg) and ref(__) and $arg == __) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 sub noop { return undef }
 
 sub identity {
@@ -111,6 +120,10 @@ sub get {
     my $coll    = shift // [];
     my $key     = shift // 0;
     my $default = shift;
+
+    if (_has_placeholders($coll, $key, $default)) {
+        return partial(\&get, $coll, $key, $default);
+    }
 
     if (is_array($coll)) {
         return defined $coll->[$key] ? $coll->[$key] : $default;
@@ -446,6 +459,10 @@ sub maps {
     my $func = shift;
     my $coll = shift;
 
+    if (_has_placeholders($func, $coll)) {
+        return partial(\&maps, $func, $coll);
+    }
+
     my $idx = 0;
 
     my @vals = map {
@@ -488,6 +505,7 @@ sub _get_reduces_args {
 sub partial {
     my $func    = shift;
     my $oldArgs = [@_];
+    my $args_without_placeholders;
 
     if (ref $func ne 'CODE') {
         carp("Expected a function as first argument");
@@ -495,8 +513,12 @@ sub partial {
 
     return sub {
         my $newArgs = [@_];
-        my $no_placeholder_args = _fill_holders($oldArgs, $newArgs);
-        return $func->(@$no_placeholder_args);
+
+        if(!$args_without_placeholders) {
+            $args_without_placeholders = _fill_holders($oldArgs, $newArgs);
+        }
+
+        return $func->(@$args_without_placeholders);
     }
 }
 

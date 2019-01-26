@@ -461,6 +461,25 @@ sub partial__returns_partially_applied_func_with_placeholders_odd_placement :Tes
     );
 }
 
+sub partial__returns_partially_applied_func_callable_multi_times :Tests {
+    my $add_two_nums = sub {
+        my ($num1, $num2) = @_;
+        return $num1 + $num2;
+    };
+
+    my $add_one_num = partial($add_two_nums, __, 100);
+
+    $add_one_num->(100);
+    $add_one_num->(100);
+    $add_one_num->(100);
+    $add_one_num->(100);
+
+    is_deeply(
+        $add_one_num->(100),
+        200,
+    );
+}
+
 # ------------------------------------------------------------------------------
 
 sub to_vals__returns_empty_array_when_args_undef :Tests {
