@@ -461,6 +461,49 @@ sub partial__returns_partially_applied_func_with_placeholders_odd_placement :Tes
     );
 }
 
+sub partial__returns_func_callable_multiple_times :Tests {
+    my $add_two_nums = sub {
+        my ($num1, $num2) = @_;
+
+        return $num1 + $num2;
+    };
+
+    my $add_one_num = partial($add_two_nums, 100);
+
+    $add_one_num->(100);
+    $add_one_num->(100);
+    $add_one_num->(100);
+    $add_one_num->(100);
+    $add_one_num->(100);
+
+    is_deeply(
+        $add_one_num->(100),
+        200,
+    );
+}
+
+sub partial__returns_func_callable_multiple_times_keeps_sideffects :Tests {
+
+    my $num3;
+    my $cause_side_effects = sub {
+        my ($num1, $num2) = @_;
+
+        $num3 += $num1 + $num2;
+    };
+
+    my $curried_cause_side_effects = partial($cause_side_effects, 100);
+
+    $curried_cause_side_effects->(100);
+    $curried_cause_side_effects->(100);
+    $curried_cause_side_effects->(100);
+    $curried_cause_side_effects->(100),
+
+    is_deeply(
+        $num3,
+        800,
+    );
+}
+
 # ------------------------------------------------------------------------------
 
 sub to_vals__returns_empty_array_when_args_undef :Tests {

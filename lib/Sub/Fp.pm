@@ -21,7 +21,7 @@ our @EXPORT_OK = qw(
     shifts      unshifts  once
 );
 
-our $VERSION = '0.37';
+our $VERSION = '0.38';
 
 use constant ARG_PLACE_HOLDER => {};
 
@@ -115,6 +115,7 @@ sub _is_nonsense_range {
         return 1;
     }
 }
+
 
 sub get {
     my $key     = shift // 0;
@@ -455,6 +456,7 @@ sub maps {
     my $func = shift;
     my $coll = shift;
 
+
     my $idx = 0;
 
     my @vals = map {
@@ -464,6 +466,7 @@ sub maps {
 
     return [@vals];
 }
+
 
 sub reduces {
     my $func           = shift;
@@ -497,7 +500,6 @@ sub _get_reduces_args {
 sub partial {
     my $func    = shift;
     my $oldArgs = [@_];
-    my $args_without_placeholders;
 
     if (ref $func ne 'CODE') {
         carp("Expected a function as first argument");
@@ -505,12 +507,9 @@ sub partial {
 
     return sub {
         my $newArgs = [@_];
+        my $filled_args = _fill_holders([spread($oldArgs)], $newArgs);
 
-        if(!$args_without_placeholders) {
-            $args_without_placeholders = _fill_holders($oldArgs, $newArgs);
-        }
-
-        return $func->(@$args_without_placeholders);
+        return $func->(spread($filled_args));
     }
 }
 
