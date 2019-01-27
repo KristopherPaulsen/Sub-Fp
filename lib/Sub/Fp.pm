@@ -25,7 +25,7 @@ our $VERSION                   = '0.39';
 use constant ARG_PLACE_HOLDER => {};
 
 _wrap_to_use_partials(
-    grep { $_ !~ /flow|flow_right|partial|chain|range/ } @EXPORT_LIST
+    grep { $_ !~ /flow|flow_right|partial|chain/ } @EXPORT_LIST
 );
 
 # -----------------------------------------------------------------------------#
