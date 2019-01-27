@@ -4,7 +4,7 @@ use strict;
 use parent qw(Test::Class);
 use Test::More;
 use Sub::Fp qw(
-incr         reduces   flatten
+incr        reduces   flatten
 drop_right  drop      take_right  take
 assoc       maps      decr        chain
 first       end       subarray    partial
