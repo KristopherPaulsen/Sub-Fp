@@ -507,6 +507,10 @@ sub maps {
 
     my $idx = 0;
 
+    if (!is_sub($func)) {
+        return get($func, $coll);
+    }
+
     my @vals = map {
       $idx++;
       $func->($_, $idx - 1, $coll);
@@ -649,6 +653,24 @@ sub spread {
 
     return split('', $coll);
 }
+
+
+my $people = [
+    {
+        name => "Bily",
+        favorite_foods => ["chese", "bread", "wine"],
+    },
+    {
+        name => "Bily",
+        favorite_foods => ["chese", "bread", "wine"],
+    },
+    {
+        name => "Bily",
+        favorite_foods => ["chese", "bread", "wine"],
+    }
+];
+
+print Dumper(get("[0]{favorite_foods}", $people));
 
 # ------------------------------------------------------------------------------
 
