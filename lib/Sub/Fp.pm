@@ -6,7 +6,7 @@ use POSIX;
 use List::Util;
 use Data::Dumper qw(Dumper);
 use Exporter qw(import);
-our $VERSION = '0.41';
+our $VERSION = '0.42';
 our @EXPORT_OK = qw(
     incr        reduces   flatten
     drop_right  drop      take_right  take
