@@ -508,12 +508,13 @@ sub maps {
     my $idx = 0;
 
     if (!is_sub($func) && $coll) {
-        return get($func, $coll);
+        return maps(get($func, __), $coll);
     }
 
     my @vals = map {
-      $idx++;
-      $func->($_, $idx - 1, $coll);
+
+        $idx++;
+        $func->($_, $idx - 1, $coll);
     } @$coll;
 
     return [@vals];
