@@ -507,7 +507,7 @@ sub maps {
 
     my $idx = 0;
 
-    if (!is_sub($func)) {
+    if (!is_sub($func) && $coll) {
         return get($func, $coll);
     }
 
