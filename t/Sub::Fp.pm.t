@@ -1528,6 +1528,19 @@ sub get__returns_value_with_key_spaces_and_numbers_and_dashes :Tests {
     );
 }
 
+sub get__returns_value_with_key_spaces_numbers_dashes_ignoring_uneeded_quotes :Tests {
+    my $collection = [
+        {
+            "favorite foods-1337" => ["cheese", "cake"]
+        }
+    ];
+
+    is_deeply(
+        get('[0]{"favorite foods-1337"}[1]', $collection),
+        "cake"
+    );
+}
+
 # ------------------------------------------------------------------------------
 
 sub assoc_returns_undef_when_args_undef :Tests {
