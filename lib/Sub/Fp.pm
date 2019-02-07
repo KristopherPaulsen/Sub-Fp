@@ -43,8 +43,10 @@ sub _contains_placeholders {
 }
 
 sub _wrap {
+    ##no critic
     no warnings 'redefine';
     no strict 'refs';
+
     my ($methodName, $decorator) = @_;
     my $module                    = caller;
     my $fullName                  = "$module"."::"."$methodName";
@@ -70,7 +72,10 @@ sub _wrap_to_use_partials {
     }
 }
 
-sub noop { return undef }
+sub noop {
+    ## no critic;
+    return undef;
+}
 
 sub identity {
     my $args = shift // undef;
@@ -310,6 +315,7 @@ sub for_each {
         $fn->($val, $idx - 1, $coll);
     }
 
+    ##no critic;
     return undef;
 }
 
