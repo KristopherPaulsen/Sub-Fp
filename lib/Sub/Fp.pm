@@ -23,6 +23,14 @@ our @EXPORT_OK = qw(
 );
 use constant ARG_PLACE_HOLDER => {};
 
+$SIG{__WARN__} = sub {
+    caller eq "Sub::Fp" ? carp $_[0] : warn $_[0];
+};
+
+$SIG{__DIE__} = sub {
+    caller eq "Sub::Fp" ? croak $_[0] : die $_[0];
+};
+
 _wrap_to_use_partials(
     grep { $_ !~ /flow|flow_right|partial|chain/ } @EXPORT_OK
 );
