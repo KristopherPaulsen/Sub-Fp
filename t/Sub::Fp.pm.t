@@ -1476,6 +1476,24 @@ sub get__returns_value_not_default_when_value_falsy :Tests {
     );
 }
 
+sub get__returns_value_non_bracketed_zero_key :Tests {
+    my $collection = ["hello", "world"];
+
+    is_deeply(
+        get('0', $collection),
+        "hello",
+    );
+}
+
+sub get__returns_value_when_hash_key_is_number :Tests {
+    my $hash = { 0 => "hello world" };
+
+    is_deeply(
+        get('0', $hash),
+        "hello world",
+    );
+}
+
 sub get__returns_value_with_deep_path_shorthand :Tests {
     my $collection = [
         {

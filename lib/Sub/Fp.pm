@@ -6,7 +6,7 @@ use POSIX;
 use List::Util;
 use Data::Dumper qw(Dumper);
 use Exporter qw(import);
-our $VERSION = '0.42';
+our $VERSION = '0.43';
 our @EXPORT_OK = qw(
     incr        reduces   flatten
     drop_right  drop      take_right  take
@@ -183,7 +183,7 @@ sub _safe_get {
 sub get {
     my ($path, $coll, $default) = @_;
 
-    if (!len($path)) {
+    if (!defined $path) {
         return $default;
     }
 
